@@ -105,7 +105,7 @@ implementation
 			call AMControl.start();
 		else
 		{
-			call SPlugControl.powerOn();
+			call SPlugControl.powerOff();
 			call SPlugControl.samplePeriodic(500, 500);
 		}
 	}
