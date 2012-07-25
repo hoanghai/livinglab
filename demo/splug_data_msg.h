@@ -1,7 +1,7 @@
 #ifndef SPLUG_DATA_MSG_H
 #define SPLUG_DATA_MSG_H
 
-#define CURRENT 			0x16
+#define CURRENT 			0x02//0x16
 #define CURRENT_SIZE 		3
 
 enum {

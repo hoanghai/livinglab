@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+
 import java.lang.String;
 import net.tinyos.message.*;
 import net.tinyos.packet.*;
@@ -20,7 +21,6 @@ public class PCComm implements MessageListener {
 	public static String TRAINING_STOP = "2";
 	public static String SPLUG_LOG_FILE = "splug.out";
 	public static String AMR_LOG_FILE = "amr.out";
-
 	public static NodeList nodeList;
 	DatagramSocket clientSocket;
 	InetAddress IPAddress;
@@ -86,28 +86,27 @@ public class PCComm implements MessageListener {
 		int id = msg.get_nodeID();
 		int counter = msg.get_counter();
 		int state = msg.get_state();
-		short val[] = msg.get_current();
-		int current = val[0]*65536 + val[1]*256 + val[2];
-		
-		Node node = nodeList.findNode(id);
+		short vals[] = msg.get_current();
+		int val = vals[0]*65536 + vals[1]*256 + vals[2];
+
+        Node node = nodeList.findNode(id);
 		if (node == null)
 		{
-			nodeList.addNode(new Node(id, String.format("Node%d", id)));
+			nodeList.addNode(new Node(id, String.format("Node%d", id), counter, state, val));
 			System.out.println(String.format("Node %d discovered", id));
 			return;
 		}
 
-		node.update(counter, state, current);
-		
+		node.update(counter, state, val);
+
 		if (id == nodeList.aggNode) // Aggregate node
 		{
-			String logStr = String.format("%d,%d", counter, current);
+            String logStr = String.format("%s,%d,%d", isTraining ? TRAINING_START : TRAINING_STOP, node.counter, node.val);
 			for (int i = 0; i < nodeList.nodeNum;i++)
 				if (nodeList.node[i].id != nodeList.aggNode && nodeList.node[i].state == 1)
 					logStr += "," + nodeList.node[i].id;
 			logStr += "\n";
 			sendToUDP(logStr, UDP_SPLUG_DATA_PORT);
-			sendToUDP(isTraining ? TRAINING_START : TRAINING_STOP, UDP_CONTROL_PORT);
 			logToFile(logStr, SPLUG_LOG_FILE);
 		}
 	}
@@ -248,7 +247,7 @@ public class PCComm implements MessageListener {
 		isTraining = true;
 		System.out.println(String.format("Training node %d", id));
 		int[] togPkt = {id, (Integer)arg.get("tog"), 0, 0, 0};
-		for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 10000; i++)
 		{
 			sendPackets(togPkt);
 			System.out.print(String.format("%d/%d", i+1, 4));
@@ -275,6 +274,35 @@ public class PCComm implements MessageListener {
 		
 	}
 
+    public void do_test()
+    {
+        int[] on53 = {53, 4, 0, 0, 0};
+        int[] off53 = {53, 5, 0, 0, 0};
+        int[] on54 = {54, 4, 0, 0, 0};
+        int[] off54 = {54, 5, 0, 0, 0};
+        
+        while(true) {
+            isTraining = true;
+            sendPackets(on53);
+            try {Thread.sleep(15000);} 
+			catch (Exception e) {}
+            sendPackets(off53);
+            try {Thread.sleep(5000);} 
+			catch (Exception e) {}
+
+            sendPackets(on54);
+            try {Thread.sleep(15000);} 
+			catch (Exception e) {}
+            sendPackets(off54);
+            try {Thread.sleep(5000);}
+			catch (Exception e) {}
+            isTraining = false;
+
+            try {Thread.sleep(15000);}
+			catch (Exception e) {}
+        }
+    }
+
 	public static void main(String[] args) throws Exception
 	{
 		String source = "serial@/dev/ttyUSB" + args[0] + ":115200";
@@ -286,7 +314,8 @@ public class PCComm implements MessageListener {
 		else
 			phoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
 
-		PCComm comm = new PCComm(new MoteIF(phoenix), "192.168.0.163");
+        // 192.168.0.163
+		PCComm comm = new PCComm(new MoteIF(phoenix), "localhost");
 
 		comm.nodeList = new NodeList(10);
 		
@@ -320,6 +349,9 @@ public class PCComm implements MessageListener {
 
 			else if (inputs[0].equals("exit"))
 				System.exit(0);
+
+            else if (inputs[0].equals("test"))
+                comm.do_test();
 
 			else if (inputs[0].equals(""))
 				continue;
