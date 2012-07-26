@@ -86,22 +86,26 @@ public class PCComm implements MessageListener {
 		int id = msg.get_nodeID();
 		int counter = msg.get_counter();
 		int state = msg.get_state();
-		short vals[] = msg.get_current();
-		int val = vals[0]*65536 + vals[1]*256 + vals[2];
+		short cs[] = msg.get_current();
+		int c = cs[0]*65536 + cs[1]*256 + cs[2];
+		short ps[] = msg.get_aenergy();
+		int p = ps[0]*65536 + ps[1]*256 + ps[2];
+		short ss[] = msg.get_vaenergy();
+		int s = ss[0]*65536 + ss[1]*256 + ss[2];
 
         Node node = nodeList.findNode(id);
 		if (node == null)
 		{
-			nodeList.addNode(new Node(id, String.format("Node%d", id), counter, state, val));
+			nodeList.addNode(new Node(id, String.format("Node%d", id)));
 			System.out.println(String.format("Node %d discovered", id));
 			return;
 		}
 
-		node.update(counter, state, val);
+		node.update(counter, state, c, p, s);
 
 		if (id == nodeList.aggNode) // Aggregate node
 		{
-            String logStr = String.format("%s,%d,%d", isTraining ? TRAINING_START : TRAINING_STOP, node.counter, node.val);
+            String logStr = String.format("%s,%d,%d,%d,%d", isTraining ? TRAINING_START : TRAINING_STOP, node.counter, node.c, node.p, node.s);
 			for (int i = 0; i < nodeList.nodeNum;i++)
 				if (nodeList.node[i].id != nodeList.aggNode && nodeList.node[i].state == 1)
 					logStr += "," + nodeList.node[i].id;

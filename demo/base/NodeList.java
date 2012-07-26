@@ -5,45 +5,52 @@ import java.lang.String;
 
 class Node
 {
-    public final double POWER_COEFF1 = 0.229965;
-    public final double POWER_COEFF2 = 1.039426;
+    public final double P1 = 0.229965;
+    public final double P2 = 1.039426;
 
 	public int id;
 	public String name;
 	public int counter;
 	public int state;
-	public int val;
-    public int lastval;
-    public long lastts;
+    public int c, p, s;
 
-	public Node(int id, String name, int counter, int state, int currval)
+    private int lastp, lasts;
+    private long lastts;
+
+	public Node(int id, String name)
 	{
 		this.id = id;
 		this.name = name;
         this.counter = counter;
         this.state = state;
-        this.lastval = currval;
+        this.c = 0;
+        this.p = 0;
+		this.s = 0;
+
+        this.lastp = 0;
+		this.lasts = 0;
         this.lastts = System.currentTimeMillis();
-        this.val = 0;
 	}
 	
-	public void update(int counter, int state, int currval)
+	public void update(int counter, int state, int c, int p, int s)
 	{
 		this.counter = counter;
 		this.state = state;
-		this.val = convert(currval);
+        this.c = c;
+		long ts = System.currentTimeMillis();
+		if (ts == lastts)
+            return;
+		this.p = convertPower(p, ts, this.lastp, this.lastts, P1, P2);
+		this.s = convertPower(s, ts, this.lasts, this.lastts, 1, 1);
+		lastp = p;
+		lasts = s;
+		lastts = ts;
 	}
 
-    private int convert(int currval)
+    private int convertPower(int val, long ts, int lastval, long lastts, double const1, double const2)
     {
-        long currts = System.currentTimeMillis();
-        if (currts == lastts)
-            return 0;
-        int elapsedTime = (int)(currts - lastts);
-        int power = 1000 * (currval - lastval) / elapsedTime;
-        lastts = currts;
-        lastval = currval;
-        return (int) (POWER_COEFF1 * power + POWER_COEFF2);
+        int tmp = (int)(1000 * (val - lastval) / (ts - lastts));
+        return (int) (const1 * tmp + const2);
     }
 }
 
@@ -88,11 +95,11 @@ public class NodeList
 
 	void print()
 	{
-		System.out.println(String.format("%-4s %-10s %-10s %-10s %-10s", "ID", "Name", "Counter", "State", "Current"));
+		System.out.println(String.format("%-4s %-10s %-10s %-10s %-10s %-10s", "ID", "Name", "Counter", "State", "Current", "Power"));
 		for (int i = 0; i < nodeNum; i++)
 		{
 			String tmp = node[i].id == aggNode ? "*" : "";
-			System.out.println(String.format("%-4d %-10s %-10d %-10d %-10d", node[i].id, node[i].name+tmp, node[i].counter, node[i].state, node[i].val));
+			System.out.println(String.format("%-4d %-10s %-10d %-10d %-10d %-10d", node[i].id, node[i].name+tmp, node[i].counter, node[i].state, node[i].c, node[i].p));
 		}
 	}
 }

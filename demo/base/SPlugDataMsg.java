@@ -7,12 +7,12 @@
 public class SPlugDataMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 9;
+    public static final int DEFAULT_MESSAGE_SIZE = 15;
 
     /** The Active Message type associated with this message. */
     public static final int AM_TYPE = 89;
 
-    /** Create a new SPlugDataMsg of size 9. */
+    /** Create a new SPlugDataMsg of size 15. */
     public SPlugDataMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -97,6 +97,20 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
         s += "  [current=";
         for (int i = 0; i < 3; i++) {
           s += "0x"+Long.toHexString(getElement_current(i) & 0xff)+" ";
+        }
+        s += "]\n";
+      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
+      try {
+        s += "  [aenergy=";
+        for (int i = 0; i < 3; i++) {
+          s += "0x"+Long.toHexString(getElement_aenergy(i) & 0xff)+" ";
+        }
+        s += "]\n";
+      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
+      try {
+        s += "  [vaenergy=";
+        for (int i = 0; i < 3; i++) {
+          s += "0x"+Long.toHexString(getElement_vaenergy(i) & 0xff)+" ";
         }
         s += "]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
@@ -443,6 +457,312 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
          for (i = 0; i < carr.length; i++) {
              if ((char)getElement_current(i) == (char)0) break;
              carr[i] = (char)getElement_current(i);
+         }
+         return new String(carr,0,i);
+    }
+
+    /////////////////////////////////////////////////////////
+    // Accessor methods for field: aenergy
+    //   Field type: short[], unsigned
+    //   Offset (bits): 72
+    //   Size of each element (bits): 8
+    /////////////////////////////////////////////////////////
+
+    /**
+     * Return whether the field 'aenergy' is signed (false).
+     */
+    public static boolean isSigned_aenergy() {
+        return false;
+    }
+
+    /**
+     * Return whether the field 'aenergy' is an array (true).
+     */
+    public static boolean isArray_aenergy() {
+        return true;
+    }
+
+    /**
+     * Return the offset (in bytes) of the field 'aenergy'
+     */
+    public static int offset_aenergy(int index1) {
+        int offset = 72;
+        if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 8;
+        return (offset / 8);
+    }
+
+    /**
+     * Return the offset (in bits) of the field 'aenergy'
+     */
+    public static int offsetBits_aenergy(int index1) {
+        int offset = 72;
+        if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 8;
+        return offset;
+    }
+
+    /**
+     * Return the entire array 'aenergy' as a short[]
+     */
+    public short[] get_aenergy() {
+        short[] tmp = new short[3];
+        for (int index0 = 0; index0 < numElements_aenergy(0); index0++) {
+            tmp[index0] = getElement_aenergy(index0);
+        }
+        return tmp;
+    }
+
+    /**
+     * Set the contents of the array 'aenergy' from the given short[]
+     */
+    public void set_aenergy(short[] value) {
+        for (int index0 = 0; index0 < value.length; index0++) {
+            setElement_aenergy(index0, value[index0]);
+        }
+    }
+
+    /**
+     * Return an element (as a short) of the array 'aenergy'
+     */
+    public short getElement_aenergy(int index1) {
+        return (short)getUIntBEElement(offsetBits_aenergy(index1), 8);
+    }
+
+    /**
+     * Set an element of the array 'aenergy'
+     */
+    public void setElement_aenergy(int index1, short value) {
+        setUIntBEElement(offsetBits_aenergy(index1), 8, value);
+    }
+
+    /**
+     * Return the total size, in bytes, of the array 'aenergy'
+     */
+    public static int totalSize_aenergy() {
+        return (24 / 8);
+    }
+
+    /**
+     * Return the total size, in bits, of the array 'aenergy'
+     */
+    public static int totalSizeBits_aenergy() {
+        return 24;
+    }
+
+    /**
+     * Return the size, in bytes, of each element of the array 'aenergy'
+     */
+    public static int elementSize_aenergy() {
+        return (8 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of each element of the array 'aenergy'
+     */
+    public static int elementSizeBits_aenergy() {
+        return 8;
+    }
+
+    /**
+     * Return the number of dimensions in the array 'aenergy'
+     */
+    public static int numDimensions_aenergy() {
+        return 1;
+    }
+
+    /**
+     * Return the number of elements in the array 'aenergy'
+     */
+    public static int numElements_aenergy() {
+        return 3;
+    }
+
+    /**
+     * Return the number of elements in the array 'aenergy'
+     * for the given dimension.
+     */
+    public static int numElements_aenergy(int dimension) {
+      int array_dims[] = { 3,  };
+        if (dimension < 0 || dimension >= 1) throw new ArrayIndexOutOfBoundsException();
+        if (array_dims[dimension] == 0) throw new IllegalArgumentException("Array dimension "+dimension+" has unknown size");
+        return array_dims[dimension];
+    }
+
+    /**
+     * Fill in the array 'aenergy' with a String
+     */
+    public void setString_aenergy(String s) { 
+         int len = s.length();
+         int i;
+         for (i = 0; i < len; i++) {
+             setElement_aenergy(i, (short)s.charAt(i));
+         }
+         setElement_aenergy(i, (short)0); //null terminate
+    }
+
+    /**
+     * Read the array 'aenergy' as a String
+     */
+    public String getString_aenergy() { 
+         char carr[] = new char[Math.min(net.tinyos.message.Message.MAX_CONVERTED_STRING_LENGTH,3)];
+         int i;
+         for (i = 0; i < carr.length; i++) {
+             if ((char)getElement_aenergy(i) == (char)0) break;
+             carr[i] = (char)getElement_aenergy(i);
+         }
+         return new String(carr,0,i);
+    }
+
+    /////////////////////////////////////////////////////////
+    // Accessor methods for field: vaenergy
+    //   Field type: short[], unsigned
+    //   Offset (bits): 96
+    //   Size of each element (bits): 8
+    /////////////////////////////////////////////////////////
+
+    /**
+     * Return whether the field 'vaenergy' is signed (false).
+     */
+    public static boolean isSigned_vaenergy() {
+        return false;
+    }
+
+    /**
+     * Return whether the field 'vaenergy' is an array (true).
+     */
+    public static boolean isArray_vaenergy() {
+        return true;
+    }
+
+    /**
+     * Return the offset (in bytes) of the field 'vaenergy'
+     */
+    public static int offset_vaenergy(int index1) {
+        int offset = 96;
+        if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 8;
+        return (offset / 8);
+    }
+
+    /**
+     * Return the offset (in bits) of the field 'vaenergy'
+     */
+    public static int offsetBits_vaenergy(int index1) {
+        int offset = 96;
+        if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 8;
+        return offset;
+    }
+
+    /**
+     * Return the entire array 'vaenergy' as a short[]
+     */
+    public short[] get_vaenergy() {
+        short[] tmp = new short[3];
+        for (int index0 = 0; index0 < numElements_vaenergy(0); index0++) {
+            tmp[index0] = getElement_vaenergy(index0);
+        }
+        return tmp;
+    }
+
+    /**
+     * Set the contents of the array 'vaenergy' from the given short[]
+     */
+    public void set_vaenergy(short[] value) {
+        for (int index0 = 0; index0 < value.length; index0++) {
+            setElement_vaenergy(index0, value[index0]);
+        }
+    }
+
+    /**
+     * Return an element (as a short) of the array 'vaenergy'
+     */
+    public short getElement_vaenergy(int index1) {
+        return (short)getUIntBEElement(offsetBits_vaenergy(index1), 8);
+    }
+
+    /**
+     * Set an element of the array 'vaenergy'
+     */
+    public void setElement_vaenergy(int index1, short value) {
+        setUIntBEElement(offsetBits_vaenergy(index1), 8, value);
+    }
+
+    /**
+     * Return the total size, in bytes, of the array 'vaenergy'
+     */
+    public static int totalSize_vaenergy() {
+        return (24 / 8);
+    }
+
+    /**
+     * Return the total size, in bits, of the array 'vaenergy'
+     */
+    public static int totalSizeBits_vaenergy() {
+        return 24;
+    }
+
+    /**
+     * Return the size, in bytes, of each element of the array 'vaenergy'
+     */
+    public static int elementSize_vaenergy() {
+        return (8 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of each element of the array 'vaenergy'
+     */
+    public static int elementSizeBits_vaenergy() {
+        return 8;
+    }
+
+    /**
+     * Return the number of dimensions in the array 'vaenergy'
+     */
+    public static int numDimensions_vaenergy() {
+        return 1;
+    }
+
+    /**
+     * Return the number of elements in the array 'vaenergy'
+     */
+    public static int numElements_vaenergy() {
+        return 3;
+    }
+
+    /**
+     * Return the number of elements in the array 'vaenergy'
+     * for the given dimension.
+     */
+    public static int numElements_vaenergy(int dimension) {
+      int array_dims[] = { 3,  };
+        if (dimension < 0 || dimension >= 1) throw new ArrayIndexOutOfBoundsException();
+        if (array_dims[dimension] == 0) throw new IllegalArgumentException("Array dimension "+dimension+" has unknown size");
+        return array_dims[dimension];
+    }
+
+    /**
+     * Fill in the array 'vaenergy' with a String
+     */
+    public void setString_vaenergy(String s) { 
+         int len = s.length();
+         int i;
+         for (i = 0; i < len; i++) {
+             setElement_vaenergy(i, (short)s.charAt(i));
+         }
+         setElement_vaenergy(i, (short)0); //null terminate
+    }
+
+    /**
+     * Read the array 'vaenergy' as a String
+     */
+    public String getString_vaenergy() { 
+         char carr[] = new char[Math.min(net.tinyos.message.Message.MAX_CONVERTED_STRING_LENGTH,3)];
+         int i;
+         for (i = 0; i < carr.length; i++) {
+             if ((char)getElement_vaenergy(i) == (char)0) break;
+             carr[i] = (char)getElement_vaenergy(i);
          }
          return new String(carr,0,i);
     }

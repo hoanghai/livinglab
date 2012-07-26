@@ -1,0 +1,7 @@
+ #!/bin/bash
+
+for ((c = 0; c < $1; c++))
+do
+	nohup python serialRx.py $c 999$c &
+done
+

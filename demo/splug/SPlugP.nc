@@ -98,25 +98,57 @@ implementation {
 		call SampleTimer.startOneShot(getRandomTime()); 
 	}
 
+    uint8_t readIdx = 0;
 	error_t readData()
 	{
 		if(!readBusy) {
 			readBusy = TRUE;
 			call Spi.cs_low();
-			call Spi.writeData(CURRENT, CURRENT_SIZE);
+            switch (readIdx)
+            {
+				case 0:
+					call Spi.writeData(CURRENT, CURRENT_SIZE); break;
+				case 1:
+					call Spi.writeData(AENERGY, AENERGY_SIZE); break;
+				case 2:
+					call Spi.writeData(VAENERGY, VAENERGY_SIZE); break;
+				default:
+					break;
+			}
 			return SUCCESS;
 		}
 		else
 			return FALSE;
 	}
 
+    // Callback function from SPI (ADE7763 chip) signaling read done event
 	event void Spi.readData(nx_uint8_t* rx_buf, uint8_t len) {
 		call Spi.cs_high();
-		memcpy(&local.current, rx_buf, len);
-		local.state = state;
+		switch (readIdx)
+		{
+			case 0:
+				memcpy(&local.current, rx_buf, len); break;
+			case 1:
+				memcpy(&local.aenergy, rx_buf, len); break;
+			case 2:
+				memcpy(&local.vaenergy, rx_buf, len); break;
+			default:
+				break;
+		}
 		call Spi.cs_high();
-		signal SPlugControl.sampleDataReady(&local);		
 		readBusy = FALSE;
+
+		if (readIdx < 2)
+		{
+			readIdx++;
+			readData();
+		}
+		else
+		{
+			readIdx = 0;
+			local.state = state;
+			signal SPlugControl.sampleDataReady(&local);
+		}
 	}
 
 /**************

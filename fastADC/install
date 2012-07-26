@@ -1,0 +1,6 @@
+ #!/bin/bash
+
+for ((c = 0; c < $1; c++))
+do
+	nohup make z1 reinstall,10$c bsl,/dev/ttyUSB$c &
+done
