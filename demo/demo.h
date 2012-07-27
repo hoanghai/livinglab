@@ -34,5 +34,56 @@ enum {
 	AMR_SAMPLE_STOP = 11
 };
 
+/*
+SPLUG_DATA_MSG
+*/
+#define CURRENT 0x16
+#define CURRENT_SIZE 3
+
+#define AENERGY 0x02
+#define AENERGY_SIZE 3
+
+#define VAENERGY 0x05
+#define VAENERGY_SIZE 3
+
+enum {
+	AM_SPLUG_DATA_MSG = 89,
+};
+
+typedef nx_struct splug_data_msg {
+	nx_uint16_t nodeID;
+	nx_uint16_t counter;
+	nx_uint16_t state;
+	nx_uint8_t current[CURRENT_SIZE];
+    nx_uint8_t aenergy[AENERGY_SIZE];
+    nx_uint8_t vaenergy[VAENERGY_SIZE];
+} splug_data_msg_t;
+
+/*
+PC_CONTROL_MSG
+*/
+enum {
+	AM_PC_CONTROL_MSG = 137,
+	PC_CONTROL_MSG_LEN = 6,
+};
+
+typedef nx_struct pc_control_msg {
+  nx_uint16_t param[PC_CONTROL_MSG_LEN];
+} pc_control_msg_t;
+
+/*
+AMR_DATA_MSG
+*/
+#define AMR_DATA_MSG_LEN	25
+
+enum {
+	AM_AMR_DATA_MSG = 90,
+};
+
+typedef nx_struct amr_data_msg {
+	nx_uint16_t counter;
+	nx_uint16_t current[AMR_DATA_MSG_LEN];
+} amr_data_msg_t;
+
 #endif
 

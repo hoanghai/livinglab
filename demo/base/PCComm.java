@@ -35,18 +35,17 @@ public class PCComm implements MessageListener {
 		setip(ipAddr);
 
 		arg = new Hashtable();
-		arg.put("all", 			new Integer(65535));
-		arg.put("sam", 			new Integer(1));
-		arg.put("samperiodic", 	new Integer(2));
-		arg.put("samstop", 		new Integer(3));
-		arg.put("on", 			new Integer(4));
-		arg.put("off", 			new Integer(5));
-		arg.put("tog", 			new Integer(6));
-		arg.put("togperiodic", 	new Integer(7));
-		arg.put("togstop", 		new Integer(8));
-		arg.put("amrsam", 		new Integer(9));
-		arg.put("amrsamrepeat", new Integer(10));
-		arg.put("amrsamstop", 	new Integer(11));
+		arg.put("all", new Integer(65535));
+		arg.put("sam", new Integer(1));
+		arg.put("samperiodic", new Integer(2));
+		arg.put("samstop", new Integer(3));
+		arg.put("on", new Integer(4));
+		arg.put("off", new Integer(5));
+		arg.put("tog", new Integer(6));
+		arg.put("togperiodic", new Integer(7));
+		arg.put("togstop", new Integer(8));
+		arg.put("amrsam", new Integer(9));
+		arg.put("samrepeat", new Integer(10));
 	}
 
 	public void setip(String ipAddr)
@@ -86,10 +85,13 @@ public class PCComm implements MessageListener {
 		int id = msg.get_nodeID();
 		int counter = msg.get_counter();
 		int state = msg.get_state();
+        // Current
 		short cs[] = msg.get_current();
 		int c = cs[0]*65536 + cs[1]*256 + cs[2];
+        // Active power
 		short ps[] = msg.get_aenergy();
 		int p = ps[0]*65536 + ps[1]*256 + ps[2];
+        // Apparent power
 		short ss[] = msg.get_vaenergy();
 		int s = ss[0]*65536 + ss[1]*256 + ss[2];
 
@@ -310,6 +312,7 @@ public class PCComm implements MessageListener {
 	public static void main(String[] args) throws Exception
 	{
 		String source = "serial@/dev/ttyUSB" + args[0] + ":115200";
+        //String source = "serial@/tmp/sersock" + ":115200";
 
 		PhoenixSource phoenix;
 

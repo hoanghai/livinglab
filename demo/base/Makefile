@@ -1,5 +1,5 @@
 COMPONENT=BaseAppC
-BUILD_EXTRA_DEPS += PCComm.class
+BUILD_EXTRA_DEPS += PCComm.class SPlugDataMsg.py
 CLEAN_EXTRA = *.class PCControlMsg.java SPlugDataMsg.java AMRDataMsg.java
 
 CFLAGS += -DPRINTFUART_ENABLED
@@ -11,13 +11,15 @@ PCComm.class: $(wildcard *.java) PCControlMsg.java SPlugDataMsg.java AMRDataMsg.
 	javac -target 1.5 -source 1.5 *.java
 
 PCControlMsg.java:
-	mig java -target=null $(CFLAGS) -java-classname=PCControlMsg ../pc_control_msg.h pc_control_msg -o $@
+	mig java -target=null $(CFLAGS) -java-classname=PCControlMsg ../demo.h pc_control_msg -o $@
 
 SPlugDataMsg.java:
-	mig java -target=null $(CFLAGS) -java-classname=SPlugDataMsg ../splug_data_msg.h splug_data_msg -o $@
+	mig java -target=null $(CFLAGS) -java-classname=SPlugDataMsg ../demo.h splug_data_msg -o $@
 
 AMRDataMsg.java:
-	mig java -target=null $(CFLAGS) -java-classname=AMRDataMsg ../amr_data_msg.h amr_data_msg -o $@
+	mig java -target=null $(CFLAGS) -java-classname=AMRDataMsg ../demo.h amr_data_msg -o $@
+
+SPlugDataMsg.py:
+	mig python -target=null $(CFLAGS) -python-classname=SPlugDataMsg ../demo.h splug_data_msg -o SPlugDataMsg.py
 
 include $(MAKERULES)
-

@@ -1,5 +1,4 @@
 #include "demo.h"
-#include "splug_data_msg.h"
 
 configuration MeterAppC
 {

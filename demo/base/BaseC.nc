@@ -1,7 +1,4 @@
 #include "demo.h"
-#include "pc_control_msg.h"
-#include "splug_data_msg.h"
-#include "amr_data_msg.h"
 
 module BaseC @safe() {
 	uses {
