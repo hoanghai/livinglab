@@ -90,6 +90,7 @@ implementation {
 	command error_t SPlugControl.sample()
 	{
 		readData();
+        return SUCCESS;
 	}
 
 	event void SampleTimer.fired()
@@ -110,8 +111,6 @@ implementation {
 					call Spi.writeData(CURRENT, CURRENT_SIZE); break;
 				case 1:
 					call Spi.writeData(AENERGY, AENERGY_SIZE); break;
-				case 2:
-					call Spi.writeData(VAENERGY, VAENERGY_SIZE); break;
 				default:
 					break;
 			}
@@ -130,15 +129,13 @@ implementation {
 				memcpy(&local.current, rx_buf, len); break;
 			case 1:
 				memcpy(&local.aenergy, rx_buf, len); break;
-			case 2:
-				memcpy(&local.vaenergy, rx_buf, len); break;
 			default:
 				break;
 		}
 		call Spi.cs_high();
 		readBusy = FALSE;
 
-		if (readIdx < 2)
+		if (readIdx < 1)
 		{
 			readIdx++;
 			readData();

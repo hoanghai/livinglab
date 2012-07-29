@@ -29,14 +29,16 @@ implementation
 			return;
 
 		data->nodeID = TOS_NODE_ID;
-		data->counter = counter++;
+		data->counter = counter;
 		data->state = _data->state;
 		memcpy(&(data->current), &(_data->current), CURRENT_SIZE);
 		memcpy(&(data->aenergy), &(_data->aenergy), AENERGY_SIZE);
-		memcpy(&(data->vaenergy), &(_data->vaenergy), VAENERGY_SIZE);
 
 		if (call AMSend.send(BASE_ID, &packet, sizeof(splug_data_msg_t)) == SUCCESS)
+        {
 			lockRadio = TRUE;
+            counter = (counter + 1) & 255;
+        }
 	}
 
 	void execute(uint16_t cmd, uint16_t param1, uint16_t param2)
@@ -106,7 +108,7 @@ implementation
 			call AMControl.start();
 		else
 		{
-			call SPlugControl.powerOff();
+			call SPlugControl.powerOn();
 			call SPlugControl.samplePeriodic(500, 500);
 		}
 	}

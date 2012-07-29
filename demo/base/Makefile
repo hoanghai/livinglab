@@ -1,5 +1,5 @@
 COMPONENT=BaseAppC
-BUILD_EXTRA_DEPS += PCComm.class SPlugDataMsg.py
+BUILD_EXTRA_DEPS += PCComm.class
 CLEAN_EXTRA = *.class PCControlMsg.java SPlugDataMsg.java AMRDataMsg.java
 
 CFLAGS += -DPRINTFUART_ENABLED
@@ -18,8 +18,5 @@ SPlugDataMsg.java:
 
 AMRDataMsg.java:
 	mig java -target=null $(CFLAGS) -java-classname=AMRDataMsg ../demo.h amr_data_msg -o $@
-
-SPlugDataMsg.py:
-	mig python -target=null $(CFLAGS) -python-classname=SPlugDataMsg ../demo.h splug_data_msg -o SPlugDataMsg.py
 
 include $(MAKERULES)

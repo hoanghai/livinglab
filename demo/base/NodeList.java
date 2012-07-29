@@ -12,7 +12,7 @@ class Node
 	public String name;
 	public int counter;
 	public int state;
-    public int c, p, s;
+    public int c, p;
 
     private int lastp, lasts;
     private long lastts;
@@ -25,14 +25,12 @@ class Node
         this.state = state;
         this.c = 0;
         this.p = 0;
-		this.s = 0;
 
         this.lastp = 0;
-		this.lasts = 0;
         this.lastts = System.currentTimeMillis();
 	}
 	
-	public void update(int counter, int state, int c, int p, int s)
+	public void update(int counter, int state, int c, int p)
 	{
 		this.counter = counter;
 		this.state = state;
@@ -41,9 +39,7 @@ class Node
 		if (ts == lastts)
             return;
 		this.p = convertPower(p, ts, this.lastp, this.lastts, P1, P2);
-		this.s = convertPower(s, ts, this.lasts, this.lastts, 1, 1);
 		lastp = p;
-		lasts = s;
 		lastts = ts;
 	}
 

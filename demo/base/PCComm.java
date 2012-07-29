@@ -12,7 +12,7 @@ public class PCComm implements MessageListener {
 
 	private MoteIF moteIF;
 	public static int PACKET_SIZE = 6;
-	public static int BASE_ID = 40;
+	public static int BASE_ID = 20;
 	public static int UDP_SPLUG_DATA_PORT = 8000;
 	public static int UDP_AMR_DATA_PORT = 8002;
 	public static int UDP_CONTROL_PORT = 8001;
@@ -91,9 +91,6 @@ public class PCComm implements MessageListener {
         // Active power
 		short ps[] = msg.get_aenergy();
 		int p = ps[0]*65536 + ps[1]*256 + ps[2];
-        // Apparent power
-		short ss[] = msg.get_vaenergy();
-		int s = ss[0]*65536 + ss[1]*256 + ss[2];
 
         Node node = nodeList.findNode(id);
 		if (node == null)
@@ -103,11 +100,11 @@ public class PCComm implements MessageListener {
 			return;
 		}
 
-		node.update(counter, state, c, p, s);
+		node.update(counter, state, c, p);
 
 		if (id == nodeList.aggNode) // Aggregate node
 		{
-            String logStr = String.format("%s,%d,%d,%d,%d", isTraining ? TRAINING_START : TRAINING_STOP, node.counter, node.c, node.p, node.s);
+            String logStr = String.format("%s,%d,%d", isTraining ? TRAINING_START : TRAINING_STOP, node.counter, node.p);
 			for (int i = 0; i < nodeList.nodeNum;i++)
 				if (nodeList.node[i].id != nodeList.aggNode && nodeList.node[i].state == 1)
 					logStr += "," + nodeList.node[i].id;
@@ -282,10 +279,10 @@ public class PCComm implements MessageListener {
 
     public void do_test()
     {
-        int[] on53 = {53, 4, 0, 0, 0};
-        int[] off53 = {53, 5, 0, 0, 0};
-        int[] on54 = {54, 4, 0, 0, 0};
-        int[] off54 = {54, 5, 0, 0, 0};
+        int[] on53 = {56, 4, 0, 0, 0};
+        int[] off53 = {56, 5, 0, 0, 0};
+        int[] on54 = {57, 4, 0, 0, 0};
+        int[] off54 = {57, 5, 0, 0, 0};
         
         while(true) {
             isTraining = true;
