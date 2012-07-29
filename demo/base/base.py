@@ -6,17 +6,28 @@ import time
 import os
 import binascii
 import thread
-
-ser = serial.Serial('/dev/ttyUSB' + sys.argv[1], 115200, timeout=2)
+import socket
 
 HEADER_LEN = 13
 PAYLOAD_LEN = 12
 MSG_LEN = HEADER_LEN + PAYLOAD_LEN
 PIVOT_HEX = '4500ffff'
 PIVOT_IDX = 2
-offset = 0
+
+conf = {"wuport":"2", "bsport":"0", "udpip":"localhost", "udpport":"8000"}
+def readConf():
+	openfile = open("conf", "r")
+	for line in openfile:
+		tmp = line.rstrip("\n").split(":")
+		try:
+			conf[tmp[0]] = tmp[1]
+		except:
+			pass
+	print conf
 
 nodelist = []
+current = 0
+
 def findNode(id):
 	global nodelist
 	if len(nodelist) == 0:
@@ -26,7 +37,7 @@ def findNode(id):
 			return i
 	return -1
 
-def updateNode(id, counter, state, current, activep):
+def updateNodeList(id, counter, state, current, activep):
 	global nodelist
 	idx = findNode(id)
 	if idx == -1:
@@ -39,26 +50,29 @@ def updateNode(id, counter, state, current, activep):
 	node["current"] = current
 	node["activep"] = activep
 
-def printNode():
-	global nodelist
-	for node in nodelist:
-		print node["id"], node["counter"], node["state"], node["activep"], "|",
-	print ""
-
-def printNodeThread():
+def sendUDPThread():
+	global nodelist, current
 	while True:
-		printNode()
+		ts = "%s"%datetime.now()
+		datastr = "%s,%s"%(ts.split(".")[0], current)
+		for node in nodelist:
+			if node["state"] == 1:
+				datastr = "%s,%s"%(datastr, str(node["id"]))
+		sock.sendto(datastr, (conf["udpip"], int(conf["udpport"])))
+		print datastr
 		time.sleep(1)
 
-def readSerialThread():
+def readBSThread():
 	while True:
 		try:
-			linebin = ser.read(MSG_LEN)
+			linebin = serialbs.read(MSG_LEN)
 			linehex = binascii.b2a_hex(linebin)
 			idx = linehex.find(PIVOT_HEX)
 			offset = (idx - PIVOT_IDX) / 2
-			ser.read(offset % MSG_LEN)
-			if linehex.startswith("7e") == False or linehex.endswith("7e") == False:
+			serialbs.read(offset % MSG_LEN)
+			cond1 = linehex.startswith("7e")
+			cond2 = linehex.endswith("7e")
+			if cond1 == False or cond2 == False:
 				continue
 
 			id = int(linehex[idx+18:idx+22], 16)
@@ -66,18 +80,35 @@ def readSerialThread():
 			state = int(linehex[idx+26:idx+30], 16)
 			current = int(linehex[idx+30:idx+36], 16)
 			activep = int(linehex[idx+36:idx+42], 16)
-			#print linehex, idx, id, counter, state, current, activep
-			updateNode(id, counter, state, current, activep)
-			#printNode()
-		except KeyboardInterrupt:
-			exit()
+			print linehex, idx, id, counter, state, current, activep
+			updateNodeList(id, counter, state, current, activep)
 		except:
 			pass#traceback.print_exc(file=sys.stdout)
-	ser.close()
+	serialbs.close()
+
+def readWUThread():
+	global current
+	while True:
+		try:	
+			line = serialwu.readline()
+			tmp = line.rsplit(",")
+			current = int(tmp[3])
+			print line, p
+		except:
+			pass#traceback.print_exc(file=sys.stdout)
+	serialwu.close()
+
+readConf()
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 try:
-	thread.start_new_thread(readSerialThread, ())
-	thread.start_new_thread(printNodeThread, ())
+	serialbs = serial.Serial('/dev/ttyUSB' + conf["bsport"], 115200, timeout=1)
+	thread.start_new_thread(readBSThread, ())
+	#serialwu = serial.Serial('/dev/ttyUSB' + conf["wuport"], 115200, timeout=2)
+
+	#thread.start_new_thread(readWUThread, ())
+	thread.start_new_thread(sendUDPThread, ())
 except:
 	traceback.print_exc(file=sys.stdout)
 
