@@ -4,9 +4,15 @@
 #ifndef DEMO_H
 #define DEMO_H
 
-#define BASE_ID				20
+#define REMOTE_BASE_ID 20
+#define LOCAL_BASE_ID 10
 
-#define AM_BASE_CONTROL_MSG 88
+/**************
+BASE_CONTROL_MSG
+**************/
+enum {
+  AM_BASE_CONTROL_MSG = 88,
+};
 
 // Control msg from base to METER and AMR
 typedef nx_struct base_control_msg {
@@ -15,6 +21,18 @@ typedef nx_struct base_control_msg {
 	nx_uint16_t param2;
 } base_control_msg_t;
 
+/**************
+ PC_CONTROL_MSG
+**************/
+#define PC_CONTROL_MSG_LEN 6
+
+enum {
+	AM_PC_CONTROL_MSG = 137,
+};
+
+typedef nx_struct pc_control_msg {
+  nx_uint16_t param[PC_CONTROL_MSG_LEN];
+} pc_control_msg_t;
 
 // Control commands
 enum {
@@ -57,18 +75,6 @@ typedef nx_struct splug_data_msg {
 	nx_uint8_t current[CURRENT_SIZE];
     nx_uint8_t aenergy[AENERGY_SIZE];
 } splug_data_msg_t;
-
-/**************
- PC_CONTROL_MSG
-**************/
-enum {
-	AM_PC_CONTROL_MSG = 137,
-	PC_CONTROL_MSG_LEN = 6,
-};
-
-typedef nx_struct pc_control_msg {
-  nx_uint16_t param[PC_CONTROL_MSG_LEN];
-} pc_control_msg_t;
 
 /*************
 AMR_DATA_MSG

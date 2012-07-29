@@ -5,16 +5,18 @@ module BaseC @safe() {
 		interface Boot;
 
 		// Radio
+		interface SplitControl as RadioControl;
+
 		interface Packet as RadioPacket;
 		interface AMSend as RadioSend;
-		interface SplitControl as RadioControl;
+
+		interface Receive as ControlRadioReceive;
 
 		interface Receive as SPlugRadioReceive;
 
 		interface Receive as AMRRadioReceive;
 
 		// Serial
-		interface Receive as SerialReceive;
 		interface SplitControl as SerialControl;
 
 		interface Packet as SPlugSerialPacket;
@@ -31,6 +33,7 @@ module BaseC @safe() {
 implementation {
 	void splugRadioReceivedNotify() 	{call Leds.led0Toggle();}
 	void amrRadioReceivedNotify() 		{call Leds.led2Toggle();}
+    void controlRadioReceivedNotify() {}
 	void radioSendDoneNotify() 			{call Leds.led1Toggle();}
 	void serialReceivedNotify() {}
 	void serialSendDoneNotify() {}
@@ -114,6 +117,19 @@ implementation {
 		return bufPtr;
 	}
 
+	// Receive PC control message
+	// Forward to node(s) using sendRadioMsg()
+	event message_t* ControlRadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
+		if (len == sizeof(pc_control_msg_t) && !lockRadio)
+		{
+			controlRadioReceivedNotify();
+			memcpy(&pcControl, (pc_control_msg_t*)payload, sizeof(pc_control_msg_t));
+			sendRadioMsg();
+			
+		}
+		return bufPtr;
+	}
+
 	event void RadioControl.startDone(error_t err)
 	{
 		if (err != SUCCESS)
@@ -162,19 +178,6 @@ implementation {
 		if (error == SUCCESS)
 			serialSendDoneNotify();
 		atomic {lockSerial = FALSE;} // no resend
-	}
-
-	// Receive PC control message
-	// Forward to node(s) using sendRadioMsg()
-	event message_t* SerialReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
-		if (len == sizeof(pc_control_msg_t) && !lockRadio)
-		{
-			serialReceivedNotify();
-			memcpy(&pcControl, (pc_control_msg_t*)payload, sizeof(pc_control_msg_t));
-			sendRadioMsg();
-			
-		}
-		return bufPtr;
 	}
 
 	event void SerialControl.startDone(error_t err)

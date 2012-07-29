@@ -34,7 +34,7 @@ implementation
 		memcpy(&(data->current), &(_data->current), CURRENT_SIZE);
 		memcpy(&(data->aenergy), &(_data->aenergy), AENERGY_SIZE);
 
-		if (call AMSend.send(BASE_ID, &packet, sizeof(splug_data_msg_t)) == SUCCESS)
+		if (call AMSend.send(REMOTE_BASE_ID, &packet, sizeof(splug_data_msg_t)) == SUCCESS)
         {
 			lockRadio = TRUE;
             counter = (counter + 1) & 255;
