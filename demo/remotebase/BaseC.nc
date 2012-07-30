@@ -6,22 +6,16 @@ module BaseC @safe() {
 
 		// Radio
 		interface SplitControl as RadioControl;
-
 		interface Packet as RadioPacket;
 		interface AMSend as RadioSend;
-
 		interface Receive as ControlRadioReceive;
-
 		interface Receive as SPlugRadioReceive;
-
 		interface Receive as AMRRadioReceive;
 
 		// Serial
 		interface SplitControl as SerialControl;
-
 		interface Packet as SPlugSerialPacket;
 		interface AMSend as SPlugSerialSend;
-
 		interface Packet as AMRSerialPacket;
 		interface AMSend as AMRSerialSend;
 
@@ -98,8 +92,18 @@ implementation {
 	event message_t* SPlugRadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
 		if (len == sizeof(splug_data_msg_t))
 		{	
-			splugRadioReceivedNotify();
-			atomic {memcpy(splugData, (splug_data_msg_t*) payload, sizeof(splug_data_msg_t));}
+			atomic {
+              int i;
+              splug_data_msg_t *data = (splug_data_msg_t*) payload;
+              splugData->nodeID = data->nodeID;
+              splugData->counter = data->counter;
+              splugData->state = data->state;
+              for (i = 0; i < CURRENT_SIZE; i++)
+                splugData->current[i] = data->current[i];
+              for (i = 0; i < AENERGY_SIZE; i++)
+                splugData->aenergy[i] = data->aenergy[i];
+            }
+            splugRadioReceivedNotify();
 			sendSPlugSerialMsg();
 		}
 		return bufPtr;
@@ -110,8 +114,14 @@ implementation {
 	event message_t* AMRRadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
 		if (len == sizeof(amr_data_msg_t))
 		{	
-			amrRadioReceivedNotify();
-			atomic {memcpy(amrData, (amr_data_msg_t*) payload, sizeof(amr_data_msg_t));}
+			atomic {
+              int i;
+              amr_data_msg_t * data = (amr_data_msg_t*) payload;
+              amrData->counter = data->counter;
+              for (i = 0; i < AMR_DATA_MSG_LEN; i++)
+                amrData->current[i] = data->current[i];
+            }
+            amrRadioReceivedNotify();
 			sendAMRSerialMsg();
 		}
 		return bufPtr;
@@ -122,9 +132,14 @@ implementation {
 	event message_t* ControlRadioReceive.receive(message_t* bufPtr, void* payload, uint8_t len) {
 		if (len == sizeof(pc_control_msg_t) && !lockRadio)
 		{
-			controlRadioReceivedNotify();
-			memcpy(&pcControl, (pc_control_msg_t*)payload, sizeof(pc_control_msg_t));
-			sendRadioMsg();
+          atomic {
+            int i;
+            pc_control_msg_t *control = (pc_control_msg_t*)payload;
+            for (i = 0; i < PC_CONTROL_MSG_LEN; i++)
+              pcControl.param[i] = control->param[i];
+          }
+          controlRadioReceivedNotify();
+          sendRadioMsg();
 			
 		}
 		return bufPtr;
