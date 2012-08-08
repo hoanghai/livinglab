@@ -13,9 +13,8 @@ public class PCComm implements MessageListener {
 	private MoteIF moteIF;
 	public static int PACKET_SIZE = 6;
 	public static int BASE_ID = 20;
-	public static int UDP_SPLUG_DATA_PORT = 8000;
-	public static int UDP_AMR_DATA_PORT = 8002;
-	public static int UDP_CONTROL_PORT = 8001;
+	public static int UDP_SPLUG_DATA_PORT = 9000;
+	public static int UDP_AMR_DATA_PORT = 9002;
 	public static boolean isTraining = false;
 	public static String TRAINING_START = "1";
 	public static String TRAINING_STOP = "2";
@@ -25,6 +24,7 @@ public class PCComm implements MessageListener {
 	DatagramSocket clientSocket;
 	InetAddress IPAddress;
 	public static Hashtable arg;
+    public static int udpCounter;
 
 	public PCComm(MoteIF moteIF, String ipAddr) {
 		this.moteIF = moteIF;
@@ -46,6 +46,8 @@ public class PCComm implements MessageListener {
 		arg.put("togstop", new Integer(8));
 		arg.put("amrsam", new Integer(9));
 		arg.put("samrepeat", new Integer(10));
+
+        udpCounter = 0;
 	}
 
 	public void setip(String ipAddr)
@@ -102,28 +104,18 @@ public class PCComm implements MessageListener {
 
 		node.update(counter, state, c, p);
 
-		if (id == nodeList.aggNode) // Aggregate node
-		{
-            String logStr = String.format("%s,%d,%d", isTraining ? TRAINING_START : TRAINING_STOP, node.counter, node.p);
-			for (int i = 0; i < nodeList.nodeNum;i++)
-				if (nodeList.node[i].id != nodeList.aggNode && nodeList.node[i].state == 1)
-					logStr += "," + nodeList.node[i].id;
-			logStr += "\n";
-			sendToUDP(logStr, UDP_SPLUG_DATA_PORT);
-			logToFile(logStr, SPLUG_LOG_FILE);
-		}
+        String logStr = isTraining ? TRAINING_START : TRAINING_STOP;
+        logStr += "," + udpCounter;
+
+		for (int i = 0; i < nodeList.nodeNum;i++)
+			if (nodeList.node[i].state == 1)
+				logStr += "," + nodeList.node[i].id;
+		logStr += "\n";
+		sendToUDP(logStr, UDP_SPLUG_DATA_PORT);
 	}
 
 	public void processAMRDataMsg(AMRDataMsg msg)
 	{
-		int counter = msg.get_counter();
-		int[] current = msg.get_current();
-		String logStr = counter + ",";
-		for (int i = 0; i < current.length; i++)
-			logStr += current[i] + ",";
-		logStr += "\n";
-		sendToUDP(logStr, UDP_AMR_DATA_PORT);
-		logToFile(logStr, AMR_LOG_FILE);
 	}
 
 	public void sendToUDP(String data, int port)
@@ -134,6 +126,7 @@ public class PCComm implements MessageListener {
 		{
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, this.IPAddress, port);
 			this.clientSocket.send(sendPacket);
+            udpCounter++;
 		}
 		catch (Exception e){System.out.println(String.format("Send UDP error at port %d", port));}
 	}
@@ -221,15 +214,9 @@ public class PCComm implements MessageListener {
 		sendPackets(packet);
 	}
 
-	public void do_train(String[] inputs)
+    /*	public void do_train(String[] inputs)
 	{
-		// Make sure aggNode is set first
-		if (nodeList.aggNode ==-1)
-			{System.out.println("No aggregate node found.");return;}
-
-		// Make sure aggNode is on and all other nodes are off
-		// before the training session
-		for (int i = 0; i < nodeList.nodeNum; i++)
+ 		for (int i = 0; i < nodeList.nodeNum; i++)
 		{
 			Node node = nodeList.node[i];
 			if (node.id == nodeList.aggNode && node.state == 0)
@@ -264,7 +251,7 @@ public class PCComm implements MessageListener {
 		}
 		System.out.println("Done");
 		isTraining = false;
-	}
+        }*/
 
 	public void do_setip(String[] inputs)
 	{
@@ -277,28 +264,36 @@ public class PCComm implements MessageListener {
 		
 	}
 
-    public void do_test()
+    public void do_train(String[] inputs)
     {
-        int[] on53 = {56, 4, 0, 0, 0};
-        int[] off53 = {56, 5, 0, 0, 0};
-        int[] on54 = {57, 4, 0, 0, 0};
-        int[] off54 = {57, 5, 0, 0, 0};
+        int[] onPkt = {0, 4, 0, 0, 0};
+        int[] offPkt = {0, 5, 0, 0, 0};
         
+        int on, off;
+        try {on = Integer.parseInt(inputs[1]);}
+		catch (Exception e) {on = 15000;}
+        try {off = Integer.parseInt(inputs[1]);}
+		catch (Exception e) {off = 5000;}
+        
+        System.out.println(String.format("On:%dms, Off:%dms", on, off));
         while(true) {
             isTraining = true;
-            sendPackets(on53);
-            try {Thread.sleep(15000);} 
-			catch (Exception e) {}
-            sendPackets(off53);
-            try {Thread.sleep(5000);} 
-			catch (Exception e) {}
-
-            sendPackets(on54);
-            try {Thread.sleep(15000);} 
-			catch (Exception e) {}
-            sendPackets(off54);
-            try {Thread.sleep(5000);}
-			catch (Exception e) {}
+            for (int i = 0; i < nodeList.nodeNum; i++)
+            {
+                Node node = nodeList.node[i];
+                onPkt[0] = node.id;
+                offPkt[0] = node.id;
+                
+                sendPackets(onPkt);
+                System.out.println(String.format("%d ON", node.id));
+                try {Thread.sleep(on);} 
+                catch (Exception e) {}
+                
+                sendPackets(offPkt);
+                System.out.println(String.format("%d OFF", node.id));
+                try {Thread.sleep(off);} 
+                catch (Exception e) {}
+            }
             isTraining = false;
 
             try {Thread.sleep(15000);}
@@ -339,8 +334,8 @@ public class PCComm implements MessageListener {
 			else if (inputs[0].equals("setname"))
 				comm.do_setname(inputs);
 
-			else if (inputs[0].equals("setagg"))
-				comm.do_setagg(inputs);
+			//else if (inputs[0].equals("setagg"))
+			//	comm.do_setagg(inputs);
 
 			else if (inputs[0].equals("send"))
 				comm.do_send(inputs);
@@ -348,14 +343,11 @@ public class PCComm implements MessageListener {
 			else if (inputs[0].equals("train"))
 				comm.do_train(inputs);
 
-			else if (inputs[0].equals("setip"))
-				comm.do_setip(inputs);
+			//else if (inputs[0].equals("setip"))
+			//	comm.do_setip(inputs);
 
 			else if (inputs[0].equals("exit"))
 				System.exit(0);
-
-            else if (inputs[0].equals("test"))
-                comm.do_test();
 
 			else if (inputs[0].equals(""))
 				continue;
