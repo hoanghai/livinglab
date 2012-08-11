@@ -85,6 +85,9 @@ public class AMRDataMsg extends net.tinyos.message.Message {
     public String toString() {
       String s = "Message <AMRDataMsg> \n";
       try {
+        s += "  [nodeID=0x"+Long.toHexString(get_nodeID())+"]\n";
+      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
+      try {
         s += "  [counter=0x"+Long.toHexString(get_counter())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
@@ -100,10 +103,73 @@ public class AMRDataMsg extends net.tinyos.message.Message {
     // Message-type-specific access methods appear below.
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: counter
-    //   Field type: int, unsigned
+    // Accessor methods for field: nodeID
+    //   Field type: short, unsigned
     //   Offset (bits): 0
-    //   Size (bits): 16
+    //   Size (bits): 8
+    /////////////////////////////////////////////////////////
+
+    /**
+     * Return whether the field 'nodeID' is signed (false).
+     */
+    public static boolean isSigned_nodeID() {
+        return false;
+    }
+
+    /**
+     * Return whether the field 'nodeID' is an array (false).
+     */
+    public static boolean isArray_nodeID() {
+        return false;
+    }
+
+    /**
+     * Return the offset (in bytes) of the field 'nodeID'
+     */
+    public static int offset_nodeID() {
+        return (0 / 8);
+    }
+
+    /**
+     * Return the offset (in bits) of the field 'nodeID'
+     */
+    public static int offsetBits_nodeID() {
+        return 0;
+    }
+
+    /**
+     * Return the value (as a short) of the field 'nodeID'
+     */
+    public short get_nodeID() {
+        return (short)getUIntBEElement(offsetBits_nodeID(), 8);
+    }
+
+    /**
+     * Set the value of the field 'nodeID'
+     */
+    public void set_nodeID(short value) {
+        setUIntBEElement(offsetBits_nodeID(), 8, value);
+    }
+
+    /**
+     * Return the size, in bytes, of the field 'nodeID'
+     */
+    public static int size_nodeID() {
+        return (8 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of the field 'nodeID'
+     */
+    public static int sizeBits_nodeID() {
+        return 8;
+    }
+
+    /////////////////////////////////////////////////////////
+    // Accessor methods for field: counter
+    //   Field type: short, unsigned
+    //   Offset (bits): 8
+    //   Size (bits): 8
     /////////////////////////////////////////////////////////
 
     /**
@@ -124,42 +190,42 @@ public class AMRDataMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'counter'
      */
     public static int offset_counter() {
-        return (0 / 8);
+        return (8 / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'counter'
      */
     public static int offsetBits_counter() {
-        return 0;
+        return 8;
     }
 
     /**
-     * Return the value (as a int) of the field 'counter'
+     * Return the value (as a short) of the field 'counter'
      */
-    public int get_counter() {
-        return (int)getUIntBEElement(offsetBits_counter(), 16);
+    public short get_counter() {
+        return (short)getUIntBEElement(offsetBits_counter(), 8);
     }
 
     /**
      * Set the value of the field 'counter'
      */
-    public void set_counter(int value) {
-        setUIntBEElement(offsetBits_counter(), 16, value);
+    public void set_counter(short value) {
+        setUIntBEElement(offsetBits_counter(), 8, value);
     }
 
     /**
      * Return the size, in bytes, of the field 'counter'
      */
     public static int size_counter() {
-        return (16 / 8);
+        return (8 / 8);
     }
 
     /**
      * Return the size, in bits, of the field 'counter'
      */
     public static int sizeBits_counter() {
-        return 16;
+        return 8;
     }
 
     /////////////////////////////////////////////////////////

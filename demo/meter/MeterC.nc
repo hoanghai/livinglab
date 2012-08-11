@@ -18,7 +18,7 @@ implementation
 {
 	message_t packet;
 	bool lockRadio = FALSE;
-	uint16_t counter = 0;
+	uint8_t counter = 0;
 
 	void dataMsgSentNotify() {call Leds.led1Toggle();}
 
@@ -37,7 +37,7 @@ implementation
 		if (call AMSend.send(BASE_ID, &packet, sizeof(splug_data_msg_t)) == SUCCESS)
         {
 			lockRadio = TRUE;
-            counter = (counter + 1) & 255;
+            counter++;
         }
 	}
 
@@ -109,7 +109,7 @@ implementation
 		else
 		{
 			call SPlugControl.powerOn();
-			call SPlugControl.samplePeriodic(500, 500);
+			call SPlugControl.samplePeriodic(950, 100);
 		}
 	}
 

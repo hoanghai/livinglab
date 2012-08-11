@@ -7,12 +7,12 @@
 public class SPlugDataMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 12;
+    public static final int DEFAULT_MESSAGE_SIZE = 9;
 
     /** The Active Message type associated with this message. */
     public static final int AM_TYPE = 89;
 
-    /** Create a new SPlugDataMsg of size 12. */
+    /** Create a new SPlugDataMsg of size 9. */
     public SPlugDataMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -114,9 +114,9 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
 
     /////////////////////////////////////////////////////////
     // Accessor methods for field: nodeID
-    //   Field type: int, unsigned
+    //   Field type: short, unsigned
     //   Offset (bits): 0
-    //   Size (bits): 16
+    //   Size (bits): 8
     /////////////////////////////////////////////////////////
 
     /**
@@ -148,38 +148,38 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
     }
 
     /**
-     * Return the value (as a int) of the field 'nodeID'
+     * Return the value (as a short) of the field 'nodeID'
      */
-    public int get_nodeID() {
-        return (int)getUIntBEElement(offsetBits_nodeID(), 16);
+    public short get_nodeID() {
+        return (short)getUIntBEElement(offsetBits_nodeID(), 8);
     }
 
     /**
      * Set the value of the field 'nodeID'
      */
-    public void set_nodeID(int value) {
-        setUIntBEElement(offsetBits_nodeID(), 16, value);
+    public void set_nodeID(short value) {
+        setUIntBEElement(offsetBits_nodeID(), 8, value);
     }
 
     /**
      * Return the size, in bytes, of the field 'nodeID'
      */
     public static int size_nodeID() {
-        return (16 / 8);
+        return (8 / 8);
     }
 
     /**
      * Return the size, in bits, of the field 'nodeID'
      */
     public static int sizeBits_nodeID() {
-        return 16;
+        return 8;
     }
 
     /////////////////////////////////////////////////////////
     // Accessor methods for field: counter
-    //   Field type: int, unsigned
-    //   Offset (bits): 16
-    //   Size (bits): 16
+    //   Field type: short, unsigned
+    //   Offset (bits): 8
+    //   Size (bits): 8
     /////////////////////////////////////////////////////////
 
     /**
@@ -200,49 +200,49 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'counter'
      */
     public static int offset_counter() {
-        return (16 / 8);
+        return (8 / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'counter'
      */
     public static int offsetBits_counter() {
-        return 16;
+        return 8;
     }
 
     /**
-     * Return the value (as a int) of the field 'counter'
+     * Return the value (as a short) of the field 'counter'
      */
-    public int get_counter() {
-        return (int)getUIntBEElement(offsetBits_counter(), 16);
+    public short get_counter() {
+        return (short)getUIntBEElement(offsetBits_counter(), 8);
     }
 
     /**
      * Set the value of the field 'counter'
      */
-    public void set_counter(int value) {
-        setUIntBEElement(offsetBits_counter(), 16, value);
+    public void set_counter(short value) {
+        setUIntBEElement(offsetBits_counter(), 8, value);
     }
 
     /**
      * Return the size, in bytes, of the field 'counter'
      */
     public static int size_counter() {
-        return (16 / 8);
+        return (8 / 8);
     }
 
     /**
      * Return the size, in bits, of the field 'counter'
      */
     public static int sizeBits_counter() {
-        return 16;
+        return 8;
     }
 
     /////////////////////////////////////////////////////////
     // Accessor methods for field: state
-    //   Field type: int, unsigned
-    //   Offset (bits): 32
-    //   Size (bits): 16
+    //   Field type: short, unsigned
+    //   Offset (bits): 16
+    //   Size (bits): 8
     /////////////////////////////////////////////////////////
 
     /**
@@ -263,48 +263,48 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'state'
      */
     public static int offset_state() {
-        return (32 / 8);
+        return (16 / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'state'
      */
     public static int offsetBits_state() {
-        return 32;
+        return 16;
     }
 
     /**
-     * Return the value (as a int) of the field 'state'
+     * Return the value (as a short) of the field 'state'
      */
-    public int get_state() {
-        return (int)getUIntBEElement(offsetBits_state(), 16);
+    public short get_state() {
+        return (short)getUIntBEElement(offsetBits_state(), 8);
     }
 
     /**
      * Set the value of the field 'state'
      */
-    public void set_state(int value) {
-        setUIntBEElement(offsetBits_state(), 16, value);
+    public void set_state(short value) {
+        setUIntBEElement(offsetBits_state(), 8, value);
     }
 
     /**
      * Return the size, in bytes, of the field 'state'
      */
     public static int size_state() {
-        return (16 / 8);
+        return (8 / 8);
     }
 
     /**
      * Return the size, in bits, of the field 'state'
      */
     public static int sizeBits_state() {
-        return 16;
+        return 8;
     }
 
     /////////////////////////////////////////////////////////
     // Accessor methods for field: current
     //   Field type: short[], unsigned
-    //   Offset (bits): 48
+    //   Offset (bits): 24
     //   Size of each element (bits): 8
     /////////////////////////////////////////////////////////
 
@@ -326,7 +326,7 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'current'
      */
     public static int offset_current(int index1) {
-        int offset = 48;
+        int offset = 24;
         if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 8;
         return (offset / 8);
@@ -336,7 +336,7 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
      * Return the offset (in bits) of the field 'current'
      */
     public static int offsetBits_current(int index1) {
-        int offset = 48;
+        int offset = 24;
         if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 8;
         return offset;
@@ -457,7 +457,7 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
     /////////////////////////////////////////////////////////
     // Accessor methods for field: aenergy
     //   Field type: short[], unsigned
-    //   Offset (bits): 72
+    //   Offset (bits): 48
     //   Size of each element (bits): 8
     /////////////////////////////////////////////////////////
 
@@ -479,7 +479,7 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'aenergy'
      */
     public static int offset_aenergy(int index1) {
-        int offset = 72;
+        int offset = 48;
         if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 8;
         return (offset / 8);
@@ -489,7 +489,7 @@ public class SPlugDataMsg extends net.tinyos.message.Message {
      * Return the offset (in bits) of the field 'aenergy'
      */
     public static int offsetBits_aenergy(int index1) {
-        int offset = 72;
+        int offset = 48;
         if (index1 < 0 || index1 >= 3) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 8;
         return offset;

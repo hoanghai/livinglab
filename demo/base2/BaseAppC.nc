@@ -23,13 +23,9 @@ implementation {
 	App.SerialReceive -> SerialAMReceiverC;
 	App.SerialControl -> SerialActiveMessageC;
 
-	components new SerialAMSenderC(AM_SPLUG_DATA_MSG) as SPlugSerialSender;
-	App.SPlugSerialPacket -> SPlugSerialSender;
-	App.SPlugSerialSend -> SPlugSerialSender;
-
-	components new SerialAMSenderC(AM_AMR_DATA_MSG) as AMRSerialSender;
-	App.AMRSerialPacket -> AMRSerialSender;
-	App.AMRSerialSend -> AMRSerialSender;
+	components new SerialAMSenderC(AM_SPLUG_DATA_MSG);
+	App.SerialPacket -> SerialAMSenderC;
+	App.SerialSend -> SerialAMSenderC;
 
 	components new TimerMilliC();
 	App.Timer -> TimerMilliC;

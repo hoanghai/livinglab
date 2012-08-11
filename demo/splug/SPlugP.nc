@@ -155,7 +155,7 @@ implementation {
 	{
 		if (call PowerTimer.isRunning()) call PowerTimer.stop();
 		call GeneralIO.set();
-		state = 1;
+		state = SPLUG_DATA_ON_STATE;
 		powerOnNotify();
 		return SUCCESS;
 	}
@@ -164,7 +164,7 @@ implementation {
 	{
 		if (call PowerTimer.isRunning()) call PowerTimer.stop();
 		call GeneralIO.clr();
-		state = 0;
+		state = SPLUG_DATA_OFF_STATE;
 		powerOffNotify();
 		return SUCCESS;
 	}
@@ -173,7 +173,8 @@ implementation {
 	{
 		if (call PowerTimer.isRunning()) call PowerTimer.stop();
 		call GeneralIO.toggle();
-		state = 1 - state;
+		state = (state == SPLUG_DATA_ON_STATE) ?
+      SPLUG_DATA_OFF_STATE : SPLUG_DATA_ON_STATE;
 		powerToggleNotify();
 		return SUCCESS;
 	}
@@ -200,7 +201,8 @@ implementation {
 	event void PowerTimer.fired()
 	{
 		call GeneralIO.toggle();
-		state = 1 - state;
+		state = (state == SPLUG_DATA_ON_STATE) ?
+      SPLUG_DATA_OFF_STATE : SPLUG_DATA_ON_STATE;
 		powerToggleNotify();
 	}
 }

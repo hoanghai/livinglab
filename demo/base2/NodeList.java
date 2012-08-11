@@ -5,17 +5,17 @@ import java.lang.String;
 
 class Node
 {
-    public final double P1 = 0.229965;
-    public final double P2 = 1.039426;
+  public final double P1 = 229.965;
+  public final double P2 = 1039.426;
 
 	public int id;
 	public String name;
 	public int counter;
 	public int state;
-    public int c, p;
+  public int c, p;
 
-    private int lastp, lasts;
-    private long lastts;
+  private int lastp, lasts;
+  private long lastts;
 
 	public Node(int id, String name)
 	{
@@ -45,7 +45,7 @@ class Node
 
     private int convertPower(int val, long ts, int lastval, long lastts, double const1, double const2)
     {
-        int tmp = (int)(1000 * (val - lastval) / (ts - lastts));
+        double tmp = (val - lastval) / (ts - lastts);
         return (int) (const1 * tmp + const2);
     }
 }

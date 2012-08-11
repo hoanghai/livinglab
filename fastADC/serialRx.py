@@ -9,7 +9,7 @@ import thread
 import time
 
 SERIAL_PORT = '0'
-UDP_IP="192.168.0.149"
+UDP_IP="127.0.0.1"
 UDP_PORT=9999
 try:
 	SERIAL_PORT = sys.argv[1]
@@ -25,24 +25,14 @@ size = 120
 msglen = size*2+13
 starthex = '7e7e4500ffff'
 startbin = binascii.a2b_hex(starthex)
-# Find location of startbin
-line = ser.read(msglen)
-idx = line.find(startbin)
-# Move so that startbin to beginning
-ser.read(idx)
-
 count = 0
-start = datetime.now()
+start = time.time()
 end = start
-start1 = time.time()
-end1 = start1
-tim = []
-buf = []
+
 while True:
 	try:	
 		line = ser.read(msglen)
-		end = datetime.now()
-		end1 = time.time()
+		end = time.time()
 		count += 1
 
 		idx = line.find(startbin)
@@ -51,31 +41,17 @@ while True:
 		sock.sendto(line[idx1:idx2], (UDP_IP, UDP_PORT))
 		ser.read(idx)
 
-		tim.append(end)
-		buf.append(binascii.b2a_hex(line))
-		print count, count/(end1-start1), size*count/(end1-start1), idx
-		'''
+		print count, count/(end-start), size*count/(end-start), idx, time.time()
+
 		x = binascii.b2a_hex(line[idx1:idx2])
 		length = len(x)
 		i = 0
-		print time.time(),
 		while (i + 4 < length):
 			tmp = x[i+2:i+4] + x[i:i+2]
 			val = int(tmp, 16)>>2
 			print val,
+			i += 4
 		print ''
-
-		if (count == 200):
-			newtim = list(tim)
-			newbuf = list(buf)
-			try:
-				thread.start_new_thread(logthread, (start, newtim, newbuf))
-			except:
-				traceback.print_exc(file=sys.stdout)
-			count = 0
-			start = end
-			start1 = end1
-		'''
 	except KeyboardInterrupt:
 		exit()
 	except:

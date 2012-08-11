@@ -4,7 +4,7 @@ from datetime import datetime
 import traceback
 import thread
 
-UDP_IP= ""
+UDP_IP = ""
 UDP_PORT = 9000
 
 training = 2
