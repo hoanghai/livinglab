@@ -25,14 +25,14 @@ def BSThread(DEBUG):
 
 	while True:
 		bsport = st.detect(BS_NAME, BS_ID, 0.1)
-		bsserial = st.connect(bsport, 115200, 2, 0.1)
+		bsserial = st.connect("BS", bsport, 115200, 2, 0.1)
 
 		while True:
 			try:
 				# Receive serial
 				line = bsserial.readline()
 				if line == "":
-					st.disconnect(bsserial)
+					st.disconnect("BS", bsserial)
 					break
 
 				# Parse and update data
@@ -45,11 +45,11 @@ def BSThread(DEBUG):
 
 				# Debug
 				if DEBUG:
-					nl.printNode(id)
+					print datastr
 			except KeyboardInterrupt:
 				quit()
 			except:
-				st.disconnect(bsserial)
+				st.disconnect("BS", bsserial)
 				break
 
-BSThread(True)
+#BSThread(True)

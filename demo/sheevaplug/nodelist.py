@@ -30,21 +30,13 @@ def calcPower(node):
 	tmp = (node["aenergy2"] - node["aenergy1"]) / (node["ts2"] - node["ts1"])
 	return P1 * tmp + P2
 
-def printNode():
-	for i in range(len(nodelist)):
-		node = nodelist[i]
-		print "%d %d %d %f," %(node["id"], node["counter"], node["state"], calcPower(node)),
-	print ""
-
-def printNode(id):
-	idx = findNode(id)
-	if idx == -1:
-		return
-	node = nodelist[idx]
-	print "%s %d %f" %(str(datetime.now()).rsplit(".")[0], node["id"], calcPower(node))
+def nodeToString(node):
+	nodestr = "%d %d %d %f"%(node["id"], node["counter"], node["state"], calcPower(node))
+	return nodestr
 
 def toString():
-	datastr = "%s | %d"%(datetime.now(), len(nodelist))
+	datastr = "%s"%datetime.now()
 	for node in nodelist:
-		datastr = "%s | %d %d %d"%(datastr, node["id"], node["counter"], node["state"])
+		nodestr = nodeToString(node)
+		datastr = "%s | %s"%(datastr, nodestr)
 	return datastr

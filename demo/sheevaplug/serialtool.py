@@ -35,17 +35,17 @@ def detect(name, id, delay):
 			#print "device not found. rescanning..."
 			time.sleep(delay)
 
-def connect(port, baud, timeout, delay):
+def connect(name, port, baud, timeout, delay):
 	while True:
 		try:
 			ser = serial.Serial(port, baud, timeout=timeout)
-			print "connected to %s"%port
+			print "%s connected to %s"%(name, port)
 			return ser
 		except:
 			#print "cannot connect to %s, reconnecting..."%port
 			time.sleep(delay)
 
-def disconnect(ser):
+def disconnect(name, ser):
 	ser.close()
-	print "disconnected from %s"%ser.port
+	print "%s disconnected from %s"%(name, ser.port)
 	#time.sleep(0.1)

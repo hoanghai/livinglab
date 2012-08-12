@@ -51,14 +51,14 @@ def Z1Thread(DEBUG):
 
 	while True:
 		z1port = st.detect(Z1_NAME, Z1_ID, 0.1)
-		z1serial = st.connect(z1port, 115200, 0.1, 0.1)
+		z1serial = st.connect("Z1", z1port, 115200, 0.1, 0.1)
 		
 		while True:
 			try:
 				# Receive serial
 				line = z1serial.read(MSG_LEN)
 				if line == "":
-					st.disconnect(z1serial)
+					st.disconnect("Z1", z1serial)
 					break
 				curr = datetime.now()
 					
@@ -77,7 +77,7 @@ def Z1Thread(DEBUG):
 			except KeyboardInterrupt:
 				quit()
 			except:
-				st.disconnect(z1serial)
+				st.disconnect("Z1", z1serial)
 				break
 		
-Z1Thread(True)
+#Z1Thread(True)

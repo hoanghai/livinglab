@@ -29,14 +29,14 @@ def WUThread(DEBUG):
 
 	while True:
 		wuport = st.detect(WU_NAME, WU_ID, 0.1)
-		wuserial = st.connect(wuport, 115200, 2, 0.1)
+		wuserial = st.connect("WU", wuport, 115200, 2, 0.1)
 
 		while True:
 			try:
 				# Receive serial
 				line = wuserial.readline()
 				if line == "":
-					st.disconnect(wuserial)
+					st.disconnect("WU", wuserial)
 					break
 
 				# Parse data
@@ -52,8 +52,8 @@ def WUThread(DEBUG):
 			except KeyboardInterrupt:
 				quit()
 			except:
-				st.disconnect(wuserial)
+				st.disconnect("WU", wuserial)
 				break
 	serialwu.close()
 
-WUThread(True)
+#WUThread(True)
