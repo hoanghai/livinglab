@@ -6,7 +6,7 @@ import serialtool as st
 import nodelist as nl
 
 UDP_IP = "192.168.10.100"
-UDP_PORT = 9002
+BS_UDP_PORT = 9002
 
 BS_NAME = "Zolertia Z1"
 BS_ID = "Z1RC1833"
@@ -41,7 +41,7 @@ def BSThread(DEBUG):
 
 				# Send UDP
 				datastr = nl.toString()
-				sock.sendto(datastr, (UDP_IP, UDP_PORT))
+				sock.sendto(datastr, (UDP_IP, BS_UDP_PORT))
 
 				# Debug
 				if DEBUG:

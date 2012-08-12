@@ -4,20 +4,16 @@ import socket
 import binascii
 from datetime import datetime
 import serialtool as st
+import conf
 
-UDP_IP = "192.168.10.100"
-UDP_PORT = 9001
-
-Z1_NAME = "Zolertia Z1"
-Z1_ID = "Z1RC1805"
-
-SIZE = 120
-MSG_LEN = SIZE*2+13
-START_BIN = binascii.a2b_hex('7e7e4500ffff')
+config = {"Z1_NAME":"Zolertia Z1", "Z1_ALIAS":"Z1", "Z1_ID":"Z1RC1805", "UDP_IP":"192.168.10.100", "Z1_UDP_PORT":"9001"}
 
 curr = datetime.now()
 prev = curr
 
+SIZE = 120
+MSG_LEN = SIZE*2+13
+START_BIN = binascii.a2b_hex('7e7e4500ffff')
 def parseData(data):
 	idx = data.find(START_BIN)
 	idx1 = 11+idx
@@ -46,19 +42,20 @@ def formatData(samples):
 	return datastr
 
 def Z1Thread(DEBUG):
-	global prev, curr
+	global prev, curr, config
+	conf.read(config)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 	while True:
-		z1port = st.detect(Z1_NAME, Z1_ID, 0.1)
-		z1serial = st.connect("Z1", z1port, 115200, 0.1, 0.1)
+		z1port = st.detect(conf["Z1_NAME"], conf["Z1_ID"], 0.1)
+		z1serial = st.connect(conf["Z1_ALIAS"], z1port, 115200, 0.1, 0.1)
 		
 		while True:
 			try:
 				# Receive serial
 				line = z1serial.read(MSG_LEN)
 				if line == "":
-					st.disconnect("Z1", z1serial)
+					st.disconnect(conf["Z1_ALIAS"], z1serial)
 					break
 				curr = datetime.now()
 					
@@ -68,7 +65,7 @@ def Z1Thread(DEBUG):
 
 				# Send UDP
 				datastr = formatData(samples)
-				sock.sendto(datastr, (UDP_IP, UDP_PORT))
+				sock.sendto(datastr, (conf["UDP_IP"], conf["Z1_UDP_PORT"]))
 
 				# Debug
 				if DEBUG:
@@ -77,7 +74,7 @@ def Z1Thread(DEBUG):
 			except KeyboardInterrupt:
 				quit()
 			except:
-				st.disconnect("Z1", z1serial)
+				st.disconnect(conf["Z1_ALIAS"], z1serial)
 				break
 		
 #Z1Thread(True)

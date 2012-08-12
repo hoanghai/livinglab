@@ -7,7 +7,7 @@ import math
 import serialtool as st
 
 UDP_IP = "192.168.10.100"
-UDP_PORT = 9000
+WU_UDP_PORT = 9000
 
 WU_NAME = "FT232R USB UART"
 WU_ID = "A1017BXB"
@@ -44,7 +44,7 @@ def WUThread(DEBUG):
 				
 				# Send UDP
 				datastr = formatData(activep, reactivep)
-				sock.sendto(datastr, (UDP_IP, UDP_PORT))
+				sock.sendto(datastr, (UDP_IP, WU_UDP_PORT))
 
 				# Debug
 				if DEBUG:
