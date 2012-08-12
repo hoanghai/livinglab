@@ -29,10 +29,10 @@ def detect(name, id, delay):
 	while True:
 		port = scan(name, id)
 		if port.startswith("/dev/ttyUSB"):
-			print "device found at %s"%port
+			#print "device found at %s"%port
 			return port
 		else:
-			print "device not found. rescanning..."
+			#print "device not found. rescanning..."
 			time.sleep(delay)
 
 def connect(port, baud, timeout, delay):
@@ -42,7 +42,7 @@ def connect(port, baud, timeout, delay):
 			print "connected to %s"%port
 			return ser
 		except:
-			print "cannot connect to %s, reconnecting..."%port
+			#print "cannot connect to %s, reconnecting..."%port
 			time.sleep(delay)
 
 def disconnect(ser):
