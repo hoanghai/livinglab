@@ -1,0 +1,9 @@
+*~
+*.class
+*.sw?
+*.out
+*.dat
+*#
+build/
+*.pyc
+tmp/

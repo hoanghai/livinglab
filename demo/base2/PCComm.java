@@ -71,6 +71,9 @@ public class PCComm implements MessageListener {
 		for (int i = 0; i < PCComm.PACKET_SIZE; i++)
 			packet[i] = (i < _inputs.length) ?_inputs[i] : 0;
 		sendPackets(packet);
+    for (int i = 0; i < PCComm.PACKET_SIZE; i++)
+      System.out.print(packet[i]+" ");
+    System.out.println();
 	}
 
 	public static void main(String[] args) throws Exception

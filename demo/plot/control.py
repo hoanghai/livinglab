@@ -1,11 +1,17 @@
 import sys
+import socket
 from PyQt4 import QtGui, QtCore
 
 class Control(QtGui.QWidget):
-	def __init__(self, control):
+	def __init__(self):
 		super(Control, self).__init__()
-		self.control = control
 		self.initUI()
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		self.UDP_IP = "192.168.10.1"
+		self.UDP_PORT = 9010
+		self.sendControl("P_RATE_DIV=0")
+		self.sendControl("Q_RATE_DIV=0")
+		self.sendControl("Z1_RATE_DIV=0")
 
 	def initUI(self):
 		slider1 = 10
@@ -46,30 +52,33 @@ class Control(QtGui.QWidget):
 		self.show()
 
 	def p_changeValue(self, value):
-		if value == 0:
-			self.p_lbl2.setText("stop")
-		else:
-			self.p_lbl2.setText("%d"%value)
-		self.control["p"] = value
+		self.p_lbl2.setText(self.getText(value))
+		self.sendControl("P_RATE_DIV=%d"%value)
 
 	def q_changeValue(self, value):
-		if value == 0:
-			self.q_lbl2.setText("stop")
-		else:
-			self.q_lbl2.setText("%d"%value)
-		self.control["q"] = value
+		self.q_lbl2.setText(self.getText(value))
+		self.sendControl("Q_RATE_DIV=%d"%value)
 
 	def supp_changeValue(self, value):
-		if value == 0:
-			self.supp_lbl2.setText("stop")
-		else:
-			self.supp_lbl2.setText("%d"%value)
-		self.control["supp"] = value
+		self.supp_lbl2.setText(self.getText(value))
+		self.sendControl("Z1_RATE_DIV=%d"%value)
 
-def ControlThread(control):
+	def getText(self, value):
+		if value == 0:
+			return "stop"
+		else:
+			return str(value)
+
+	def sendControl(self, datastr):
+		self.sock.sendto(datastr, (self.UDP_IP, self.UDP_PORT))
+		print datastr
+
+def ControlThread():
 	try:
 		app = QtGui.QApplication(sys.argv)
-		ex = Control(control)
+		ex = Control()
 		sys.exit(app.exec_())
 	except:
 		quit
+
+ControlThread()

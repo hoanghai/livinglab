@@ -8,12 +8,11 @@ import matplotlib.animation as animation
 import matplotlib.gridspec as gs
 
 import cbuf
-import control as ctrl
 import udprx
 
 gs = gs.GridSpec(2, 2)
 fig = plt.figure()
-control = {"p":0, "q":0, "supp":0}
+
 y = []
 l = []
 
@@ -46,9 +45,9 @@ for i in range(2):
 
 def init():
 	try:
-		thread.start_new_thread(ctrl.ControlThread, (control,))
-		thread.start_new_thread(udprx.Z1Thread, (control, y[0],))
-		thread.start_new_thread(udprx.WUThread, (control, y[1], y[2],))
+		thread.start_new_thread(udprx.Z1Thread, (y[0],))
+		thread.start_new_thread(udprx.PThread, (y[1],))
+		thread.start_new_thread(udprx.QThread, (y[2],))
 	except:
 		print "Error creating thread. Exit now."
 		quit

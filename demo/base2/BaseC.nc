@@ -21,10 +21,7 @@ module BaseC @safe() {
 implementation {
 	void radioSendDoneNotify() 			{call Leds.led1Toggle();}
 
-	// Send Radio
 	message_t baseControlPkt;
-
-	// Others
 	bool lockRadio = FALSE;
 
 /**************
