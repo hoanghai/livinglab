@@ -24,6 +24,8 @@ implementation
 
 	void sendRadioMsg(splug_data_msg_t* _data)
 	{
+    int i;
+
 		splug_data_msg_t* data = (splug_data_msg_t*)call Packet.getPayload(&packet, sizeof(splug_data_msg_t));
 		if (data == NULL || lockRadio)
 			return;
@@ -31,8 +33,13 @@ implementation
 		data->nodeID = TOS_NODE_ID;
 		data->counter = counter;
 		data->state = _data->state;
-		memcpy(&(data->current), &(_data->current), CURRENT_SIZE);
-		memcpy(&(data->aenergy), &(_data->aenergy), AENERGY_SIZE);
+    for (i = 0; i < CURRENT_SIZE; i++)
+      data->current[i] = _data->current[i];
+    for (i = 0; i < AENERGY_SIZE; i++)
+      data->aenergy[i] = _data->aenergy[i];
+
+    //		memcpy(&(data->current), &(_data->current), CURRENT_SIZE);
+    //		memcpy(&(data->aenergy), &(_data->aenergy), AENERGY_SIZE);
 
 		if (call AMSend.send(BASE_ID, &packet, sizeof(splug_data_msg_t)) == SUCCESS)
         {

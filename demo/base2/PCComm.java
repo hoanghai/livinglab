@@ -13,8 +13,11 @@ public class PCComm implements MessageListener {
 	private MoteIF moteIF;
 	public static int PACKET_SIZE = 6;
 	public static int BASE_ID = 20;
-	public static boolean isTraining = false;
+  public static String UDP_IP = "192.168.10.1";
+  public static int TRAIN_UDP_PORT = 9011;
 	public static Hashtable arg;
+	DatagramSocket clientSocket;
+	InetAddress IPAddress;
 
 	public PCComm(MoteIF moteIF) {
 		this.moteIF = moteIF;
@@ -31,6 +34,14 @@ public class PCComm implements MessageListener {
 		arg.put("togstop", new Integer(8));
 		arg.put("amrsam", new Integer(9));
 		arg.put("samrepeat", new Integer(10));
+
+		try {
+      clientSocket = new DatagramSocket();
+      this.IPAddress = InetAddress.getByName(UDP_IP);
+    }
+		catch (Exception e) {
+      System.out.println("Error creating UDP socket.");
+    }
 	}
 
 	public void sendPackets(int[] packet) {
@@ -40,13 +51,35 @@ public class PCComm implements MessageListener {
 			moteIF.send(BASE_ID, payload);
 		}
 		catch (IOException exception) {
-			System.err.println("Exception thrown when sending packets. Exiting.");
 			System.err.println(exception);
 		}
 	}
 
 	public void messageReceived(int to, Message message) {
 	}
+
+	public void sendToUDP(String data, int port)
+	{
+		byte[] sendData = new byte[100];
+		sendData = data.getBytes();
+		try
+		{
+			DatagramPacket sendPacket = new 
+        DatagramPacket(sendData, sendData.length, this.IPAddress, port);
+			this.clientSocket.send(sendPacket);
+		}
+		catch (Exception e) {System.out.println("Error sending UDP data.");}
+	}
+
+  public void do_train(String[] inputs)
+  {
+    sendToUDP("TRAIN=1", TRAIN_UDP_PORT);
+    System.out.println("start");
+    try {Thread.sleep(5000);}
+    catch (Exception e) {}
+    sendToUDP("TRAIN=2", TRAIN_UDP_PORT);
+    System.out.println("stop");
+  }
 
 	public void do_send(String[] inputs)
 	{
@@ -83,8 +116,7 @@ public class PCComm implements MessageListener {
 
 		if (source == null)
 			phoenix = BuildSource.makePhoenix(PrintStreamMessenger.err);
-		else
-			phoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
+					phoenix = BuildSource.makePhoenix(source, PrintStreamMessenger.err);
 
   	PCComm comm = new PCComm(new MoteIF(phoenix));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -96,6 +128,8 @@ public class PCComm implements MessageListener {
 
 			if (inputs[0].equals("send"))
 				comm.do_send(inputs);
+      else if (inputs[0].equals("train"))
+				comm.do_train(inputs);
 			else if (inputs[0].equals("exit"))
 				System.exit(0);
 			else if (inputs[0].equals(""))
