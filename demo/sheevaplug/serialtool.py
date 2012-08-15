@@ -52,15 +52,3 @@ def disconnect(name, ser):
 	ser.close()
 	print "[%s] %s disconnected from %s"%(datetime.now(), name, ser.port)
 
-def readCfg():
-	cfg = {}
-	openfile = open("cfg", "r")
-	for line in openfile:
-		if line == "":
-			continue
-		tmp = line.rstrip("\n").rsplit("=")
-		try:
-			cfg[tmp[0]] = tmp[1]
-		except:
-			pass
-	return cfg

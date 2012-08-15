@@ -30,6 +30,7 @@ implementation
 		if (data == NULL || lockRadio)
 			return;
 
+    // Copy _data to data, normal memcpy function does not seem to work
 		data->nodeID = TOS_NODE_ID;
 		data->counter = counter;
 		data->state = _data->state;

@@ -12,7 +12,7 @@ def updateNode(id, counter, state, aenergy):
 	idx = findNode(id)
 	if idx == -1:
 		# If not found then add new node
-		node = {"id":id, "counter":counter, "state":state, "ts1":datetime.now(), "aenergy1":aenergy, "ts2":datetime.now(), "aenergy2":aenergy}
+		node = {"id":id, "counter":counter, "state":state, "ts1":datetime.now(), "aenergy1":aenergy, "ts2":datetime.now(), "aenergy2":aenergy, "p":0}
 		nodelist.append(node)
 	else:
 		# Update
@@ -23,6 +23,7 @@ def updateNode(id, counter, state, aenergy):
 		node["aenergy1"] = node["aenergy2"]
 		node["ts2"] = datetime.now()
 		node["aenergy2"] = aenergy
+		node["p"] = calcPower(node)
 
 def calcPower(node):
 	P1 = 0.259246378478
@@ -33,12 +34,11 @@ def calcPower(node):
 	return P1 * tmp + P2
 
 def nodeToString(node):
-	nodestr = "%d %d %d %f"%(node["id"], node["counter"], node["state"], calcPower(node))
+	nodestr = "%d %d %d %f"%(node["id"], node["counter"], node["state"], node["p"])
 	return nodestr
 
 def toString():
 	datastr = ""
 	for node in nodelist:
-		nodestr = nodeToString(node)
-		datastr = "%s | %s"%(datastr, nodestr)
+		datastr = "%s,%f"%(datastr, node["p"])
 	return datastr

@@ -16,6 +16,7 @@ def parseData(data):
 	s = int(tmp[20])
 	pf = int(tmp[16])
 	q = int(math.sqrt(s**2 - p**2))
+
 	wu["ts"] = datetime.now()
 	wu["p"] = p
 	wu["q"] = q
@@ -57,8 +58,6 @@ def WU_SerialRx_Thread(cfg, DEBUG):
 					st.disconnect(cfg["WU_ALIAS"], ser)
 					break
 				parseData(line[1:len(line)-3])
-				if DEBUG:
-					print "%s %s"%(line, datastr)
 			except KeyboardInterrupt:
 				quit()
 			except:

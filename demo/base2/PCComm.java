@@ -73,12 +73,46 @@ public class PCComm implements MessageListener {
 
   public void do_train(String[] inputs)
   {
-    sendToUDP("TRAIN=1", TRAIN_UDP_PORT);
-    System.out.println("start");
-    try {Thread.sleep(5000);}
-    catch (Exception e) {}
-    sendToUDP("TRAIN=2", TRAIN_UDP_PORT);
-    System.out.println("stop");
+    int[] packet = {0, 4, 0, 0, 0, 0};
+    Random rnd = new Random();
+
+    while  (true) {
+      sendToUDP("TRAIN=1", TRAIN_UDP_PORT);
+      System.out.println("start training");
+      for (int i = 1; i < inputs.length; i++) {
+        int id;
+        try {id = Integer.parseInt(inputs[i]);}
+        catch  (Exception e) {continue;}
+        packet[0] = id;
+        packet[1] = 4;
+        sendPackets(packet);
+        System.out.println(String.format("%d on", id));
+        try {Thread.sleep(40000);}
+        catch (Exception e) {}
+
+        packet[1] = 5;
+        sendPackets(packet);
+        System.out.println(String.format("%d off", id));        
+        try {Thread.sleep(20000);}
+        catch (Exception e) {}
+      }
+      sendToUDP("TRAIN=2", TRAIN_UDP_PORT);
+      System.out.println("stop training");
+
+      for (int i = 1; i < inputs.length; i++) {
+        int id;
+        try {id = Integer.parseInt(inputs[i]);}
+        catch  (Exception e) {continue;}
+        if (rnd.nextInt(2) == 0) {
+          packet[0] = id;
+          packet[1] = 4;
+          sendPackets(packet);
+        }
+      }
+
+      try {Thread.sleep(60000);}
+      catch (Exception e) {}
+    }
   }
 
 	public void do_send(String[] inputs)

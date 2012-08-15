@@ -34,8 +34,6 @@ def BS_SerialRx_Thread(cfg, DEBUG):
 					st.disconnect(cfg["BS_ALIAS"], ser)
 					break
 				parseData(line)
-				if DEBUG:
-					print datastr
 			except KeyboardInterrupt:
 				quit()
 			except:
