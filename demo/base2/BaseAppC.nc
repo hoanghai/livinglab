@@ -11,6 +11,7 @@ implementation {
 	App.RadioPacket -> AMSenderC;
 	App.RadioSend -> AMSenderC;
 	App.RadioControl -> ActiveMessageC;
+  App.PacketAcknowledgements -> ActiveMessageC;
 
 	// Serial communication: receive command from PC
 	components SerialActiveMessageC, new SerialAMReceiverC(AM_PC_CONTROL_MSG);
@@ -20,3 +21,4 @@ implementation {
 	components new TimerMilliC();
 	App.Timer -> TimerMilliC;
 }
+

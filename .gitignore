@@ -3,6 +3,7 @@
 *.sw?
 *.out
 *.dat
+*.png
 *#
 build/
 *.pyc

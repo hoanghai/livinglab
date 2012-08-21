@@ -74,19 +74,19 @@ def Train_UDPRx_Thread(cfg, DEBUG):
 cfg = readCfg()
 
 try:
-	thread.start_new_thread(bs.BS_SerialRx_Thread, (cfg, DEBUG,))
-	thread.start_new_thread(bs.BS_UDPTx_Thread, (cfg, DEBUG, ))
+	#thread.start_new_thread(bs.BS_SerialRx_Thread, (cfg, DEBUG,))
+	#thread.start_new_thread(bs.BS_UDPTx_Thread, (cfg, DEBUG, ))
 
-	thread.start_new_thread(wu.WU_SerialRx_Thread, (cfg, DEBUG,))
-	thread.start_new_thread(wu.WU_UDPTx_Thread, (cfg, DEBUG, ))
+	#thread.start_new_thread(wu.WU_SerialRx_Thread, (cfg, DEBUG,))
+	#thread.start_new_thread(wu.WU_UDPTx_Thread, (cfg, DEBUG, ))
 
 	thread.start_new_thread(z1.Z1Thread, (cfg, DEBUG,))
 
-	thread.start_new_thread(Rate_UDPRx_Thread, (cfg, True,))
+	#thread.start_new_thread(Rate_UDPRx_Thread, (cfg, True,))
 
-	thread.start_new_thread(Train_UDPRx_Thread, (cfg, True,))
+	#thread.start_new_thread(Train_UDPRx_Thread, (cfg, True,))
 
-	thread.start_new_thread(Data_UDPTx_Thread, (cfg, True,))
+	#thread.start_new_thread(Data_UDPTx_Thread, (cfg, True,))
 except:
 	traceback.print_exc(file=sys.stdout)
 

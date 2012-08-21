@@ -73,45 +73,75 @@ public class PCComm implements MessageListener {
 
   public void do_train(String[] inputs)
   {
-    int[] packet = {0, 4, 0, 0, 0, 0};
+    int[] packet = {0, 0, 0, 0, 0, 0};
     Random rnd = new Random();
 
     while  (true) {
+      // Training
       sendToUDP("TRAIN=1", TRAIN_UDP_PORT);
-      System.out.println("start training");
+      System.out.println("-----------\nstart training");
       for (int i = 1; i < inputs.length; i++) {
-        int id;
-        try {id = Integer.parseInt(inputs[i]);}
+        try {packet[0] = Integer.parseInt(inputs[i]);}
         catch  (Exception e) {continue;}
-        packet[0] = id;
-        packet[1] = 4;
+        packet[1] = (Integer) arg.get("on");
         sendPackets(packet);
-        System.out.println(String.format("%d on", id));
-        try {Thread.sleep(40000);}
-        catch (Exception e) {}
+        System.out.print(String.format("%d on", packet[0]));
 
-        packet[1] = 5;
+        sleep(40000);
+
+        packet[1] = (Integer) arg.get("off");
         sendPackets(packet);
-        System.out.println(String.format("%d off", id));        
-        try {Thread.sleep(20000);}
-        catch (Exception e) {}
+        System.out.print(String.format("%d off", packet[0]));        
+
+        sleep(20000);
       }
       sendToUDP("TRAIN=2", TRAIN_UDP_PORT);
       System.out.println("stop training");
 
+      // Evaluating
+      System.out.println("start evaluating");
       for (int i = 1; i < inputs.length; i++) {
-        int id;
-        try {id = Integer.parseInt(inputs[i]);}
+        try {packet[0] = Integer.parseInt(inputs[i]);}
         catch  (Exception e) {continue;}
         if (rnd.nextInt(2) == 0) {
-          packet[0] = id;
-          packet[1] = 4;
+          packet[1] = (Integer) arg.get("on");
           sendPackets(packet);
+          System.out.print(String.format("%d ", packet[0]));
         }
       }
 
-      try {Thread.sleep(60000);}
-      catch (Exception e) {}
+      sleep(60000);
+
+      packet[0] = (Integer) arg.get("all");
+      packet[1] = (Integer) arg.get("off");
+      sendPackets(packet);
+      System.out.println("stop evaluating");
+    }
+  }
+
+  public void do_test(String[] inputs) {
+    int length = (int) Math.pow(2, inputs.length-1);
+    System.out.println(length);
+    int[] packet = {0, 0, 0, 0, 0, 0};
+    int state;
+    for (int i = 0; i < length; i++) {
+      System.out.print(String.format("%d: ", i));
+      for (int j = 0; j < inputs.length-1; j++) {
+        try {packet[0] = Integer.parseInt(inputs[j+1]);}
+        catch  (Exception e) {continue;}
+        state = (i>>j) % 2;
+        packet[1] = state == 0 ? (Integer) arg.get("off") : (Integer) arg.get("on");
+        sendPackets(packet);
+        System.out.print(String.format("%d ", state));
+      }
+
+      sleep(20000);
+
+      packet[0] = (Integer) arg.get("all");
+      packet[1] = (Integer) arg.get("off");
+      sendPackets(packet);
+
+      sleep(5000);
     }
   }
 
@@ -143,6 +173,18 @@ public class PCComm implements MessageListener {
     System.out.println();
 	}
 
+  public void sleep(int time) {
+    int count = time / 1000;
+    System.out.println();
+    for (int i = 0; i < count; i++) {
+      try {
+        Thread.sleep(1000);
+        System.out.print(".");
+      }
+      catch (Exception e) {continue;}
+    }
+    System.out.println();
+  }
 	public static void main(String[] args) throws Exception
 	{
 		String source = "serial@/dev/ttyUSB" + args[0] + ":115200";
@@ -166,6 +208,8 @@ public class PCComm implements MessageListener {
 				comm.do_train(inputs);
 			else if (inputs[0].equals("exit"))
 				System.exit(0);
+      else if (inputs[0].equals("test"))
+				comm.do_test(inputs);
 			else if (inputs[0].equals(""))
 				continue;
 			else

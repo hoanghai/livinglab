@@ -1,8 +1,7 @@
 import socket
 
 UDP_IP = ""
-WU_UDP_PORT = 9000
-Z1_UDP_PORT = 9001
+Z1_UDP_PORT = 9003
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

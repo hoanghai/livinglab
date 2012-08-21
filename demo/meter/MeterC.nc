@@ -20,33 +20,31 @@ implementation
 	bool lockRadio = FALSE;
 	uint8_t counter = 0;
 
-	void dataMsgSentNotify() {call Leds.led1Toggle();}
+	void radioMsgSentNotify() {call Leds.led1Toggle();}
+  void radioMsgErrorNotify() {call Leds.led2Toggle();}
 
-	void sendRadioMsg(splug_data_msg_t* _data)
+	void sendRadioMsg(splug_data_msg_t* data)
 	{
     int i;
 
-		splug_data_msg_t* data = (splug_data_msg_t*)call Packet.getPayload(&packet, sizeof(splug_data_msg_t));
-		if (data == NULL || lockRadio)
-			return;
+		splug_data_msg_t* splugData = (splug_data_msg_t*)call Packet.getPayload(&packet, sizeof(splug_data_msg_t));
+		if (splugData == NULL) return;
 
-    // Copy _data to data, normal memcpy function does not seem to work
-		data->nodeID = TOS_NODE_ID;
-		data->counter = counter;
-		data->state = _data->state;
-    for (i = 0; i < CURRENT_SIZE; i++)
-      data->current[i] = _data->current[i];
-    for (i = 0; i < AENERGY_SIZE; i++)
-      data->aenergy[i] = _data->aenergy[i];
+    atomic {
+      splugData->nodeID = TOS_NODE_ID;
+      splugData->counter = counter;
+      splugData->state = data->state;
+      for (i = 0; i < CURRENT_SIZE; i++)
+        splugData->current[i] = data->current[i];
+      for (i = 0; i < AENERGY_SIZE; i++)
+        splugData->aenergy[i] = data->aenergy[i];
+    }
 
-    //		memcpy(&(data->current), &(_data->current), CURRENT_SIZE);
-    //		memcpy(&(data->aenergy), &(_data->aenergy), AENERGY_SIZE);
-
-		if (call AMSend.send(BASE_ID, &packet, sizeof(splug_data_msg_t)) == SUCCESS)
-        {
-			lockRadio = TRUE;
-            counter++;
-        }
+    if (lockRadio) return;
+		if (call AMSend.send(BASE_ID, &packet, sizeof(splug_data_msg_t)) == SUCCESS) {
+			atomic {lockRadio = TRUE;}
+      counter++;
+    }
 	}
 
 	void execute(uint16_t cmd, uint16_t param1, uint16_t param2)
@@ -95,19 +93,18 @@ implementation
 			base_control_msg_t *control = (base_control_msg_t*) payload;
 			atomic {execute(control->cmd, control->param1, control->param2);}
 		}
-
 		return bufPtr;
 	}
 
-	event void SPlugControl.sampleDataReady(splug_data_msg_t* _data)
+	event void SPlugControl.sampleDataReady(splug_data_msg_t* data)
 	{
-		sendRadioMsg(_data);
+		sendRadioMsg(data);
 	}
 
 	event void AMSend.sendDone(message_t* msg, error_t error)
 	{
-		lockRadio = FALSE;
-		dataMsgSentNotify();
+		atomic {lockRadio = FALSE;}
+		radioMsgSentNotify();
 	}
 
 	event void AMControl.startDone(error_t err)

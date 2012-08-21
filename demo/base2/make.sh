@@ -1,1 +1,1 @@
-make clean && make z1
+make clean && make $1

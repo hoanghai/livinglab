@@ -90,7 +90,7 @@ implementation {
 	command error_t SPlugControl.sample()
 	{
 		readData();
-        return SUCCESS;
+    return SUCCESS;
 	}
 
 	event void SampleTimer.fired()
@@ -99,7 +99,7 @@ implementation {
 		call SampleTimer.startOneShot(getRandomTime()); 
 	}
 
-    uint8_t readIdx = 0;
+  uint8_t readIdx = 0;
 	error_t readData()
 	{
 		if(!readBusy) {

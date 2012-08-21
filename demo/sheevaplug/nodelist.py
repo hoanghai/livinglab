@@ -40,5 +40,5 @@ def nodeToString(node):
 def toString():
 	datastr = ""
 	for node in nodelist:
-		datastr = "%s,%f"%(datastr, node["p"])
+		datastr = "%d %d %f, %s"%(node["id"], node["counter"], node["p"], datastr)
 	return datastr

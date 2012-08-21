@@ -14,7 +14,6 @@ def Z1Thread(buf):
 			datastr, addr = sock.recvfrom(10000)
 			tmp = datastr.rsplit("|")
 			data = tmp[2].rsplit(" ")
-			print data
 			for val in data:
 				try:
 					cbuf.cwrite(buf, int(val))

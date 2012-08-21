@@ -62,7 +62,7 @@ def init():
 		thread.start_new_thread(udprx.Z1Thread, (z1y,))
 		thread.start_new_thread(udprx.PThread, (py,))
 		thread.start_new_thread(udprx.QThread, (qy,))
-		thread.start_new_thread(udprx.GTThread, (gty,))
+		#thread.start_new_thread(udprx.GTThread, (gty,))
 	except:
 		print "Error creating thread. Exit now."
 		quit
