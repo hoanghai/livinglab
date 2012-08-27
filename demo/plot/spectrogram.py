@@ -30,7 +30,7 @@ print length, rate
 
 try:
 	# plot
-	gs = gs.GridSpec(4, 1)
+	gs = gs.GridSpec(3, 1)
 	ax = plt.subplot(gs[0,:])
 	ax.plot(y)
 	ax.set_xlim(0, length)
@@ -39,14 +39,6 @@ try:
 	pxx, freqs, bins, im = ax.specgram(y, NFFT=WINDOW_SIZE, Fs=int(rate), noverlap=0)
 	ax.set_xlim(0, int(length / rate))
 	ax.set_ylim(0, 1000)
-
-	ax = plt.subplot(gs[3:4,:])
-	npts = 2**15
-	ft = fft(y[1570000:1570000+npts], npts)
-	
-	mgft=abs(ft)
-	mgft /= np.max(mgft)
-	ax.plot(mgft[0:npts/2+1])
 
 	fig = plt.figure()
 	ax = fig.add_subplot(111, projection='3d')
@@ -59,7 +51,7 @@ try:
 			y[i,j] = bins[j]
 			if i > 20:
 				z[i,j] = pxx[i, j]
-	ax.plot_wireframe(x, y, z, rstride=5, cstride=5)
+	ax.plot_wireframe(x, y, z, rstride=2, cstride=2)
 
 	plt.show()
 	

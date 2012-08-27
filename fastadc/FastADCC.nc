@@ -26,6 +26,7 @@ implementation{
 	uint16_t idx = 0;
 	uint16_t offset = 0;
 	uint16_t offset2 = 0;
+
 	msp430adc12_channel_config_t adcconfig = {
 		inch: INPUT_CHANNEL_A7,
 		sref: REFERENCE_AVcc_VREFnegterm,

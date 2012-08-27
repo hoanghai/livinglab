@@ -68,6 +68,6 @@ def WU_SerialRx_Thread(cfg, DEBUG):
 			except KeyboardInterrupt:
 				quit()
 			except:
-				print "wrond format"
+				print "wrong format"
 				st.disconnect(cfg["WU_ALIAS"], ser)
 				break

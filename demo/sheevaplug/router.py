@@ -38,6 +38,20 @@ def Rate_UDPRx_Thread(cfg, DEBUG):
 		except:
 			pass
 
+# Receive TRAIN event notification from PC
+def Train_UDPRx_Thread(cfg, DEBUG):
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	sock.bind(("", int(cfg["TRAIN_UDP_PORT"])))
+	while True:
+		data, addr = sock.recvfrom(1000)
+		tmp = data.rstrip("\n").rsplit("=")
+		try:
+			cfg[tmp[0]] = str(int(tmp[1])) # value should be convertable to int
+			if DEBUG:
+				print data
+		except:
+			pass
+
 # Send data to PC's training module
 # This data is collected from TRAIN, WU and BS 
 def Data_UDPTx_Thread(cfg, DEBUG):
@@ -54,39 +68,28 @@ def Data_UDPTx_Thread(cfg, DEBUG):
 			print datastr
 		time.sleep(1.0)
 
-# Receive TRAIN event notification from PC
-def Train_UDPRx_Thread(cfg, DEBUG):
-	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	sock.bind(("", int(cfg["TRAIN_UDP_PORT"])))
-	while True:
-		data, addr = sock.recvfrom(1000)
-		tmp = data.rstrip("\n").rsplit("=")
-		try:
-			cfg[tmp[0]] = str(int(tmp[1])) # value should be convertable to int
-			if DEBUG:
-				print data
-		except:
-			pass
-
 ##################################################
 #                      MAIN                      #
 ##################################################
 cfg = readCfg()
 
 try:
-	#thread.start_new_thread(bs.BS_SerialRx_Thread, (cfg, DEBUG,))
-	#thread.start_new_thread(bs.BS_UDPTx_Thread, (cfg, DEBUG, ))
+	'''
+	thread.start_new_thread(bs.BS_SerialRx_Thread, (cfg, DEBUG,))
+	thread.start_new_thread(bs.BS_UDPTx_Thread, (cfg, DEBUG, ))
 
-	#thread.start_new_thread(wu.WU_SerialRx_Thread, (cfg, DEBUG,))
-	#thread.start_new_thread(wu.WU_UDPTx_Thread, (cfg, DEBUG, ))
+	thread.start_new_thread(wu.WU_SerialRx_Thread, (cfg, DEBUG,))
+	thread.start_new_thread(wu.WU_UDPTx_Thread, (cfg, DEBUG, ))
 
 	thread.start_new_thread(z1.Z1Thread, (cfg, DEBUG,))
 
-	#thread.start_new_thread(Rate_UDPRx_Thread, (cfg, True,))
+	thread.start_new_thread(Rate_UDPRx_Thread, (cfg, True,))
 
-	#thread.start_new_thread(Train_UDPRx_Thread, (cfg, True,))
+	thread.start_new_thread(Train_UDPRx_Thread, (cfg, True,))
 
-	#thread.start_new_thread(Data_UDPTx_Thread, (cfg, True,))
+	thread.start_new_thread(Data_UDPTx_Thread, (cfg, True,))
+	'''
+	thread.start_new_thread(z1.Z1Thread, (cfg, DEBUG,))
 except:
 	traceback.print_exc(file=sys.stdout)
 

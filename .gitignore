@@ -4,6 +4,7 @@
 *.out
 *.dat
 *.png
+*.tar.gz
 *#
 build/
 *.pyc

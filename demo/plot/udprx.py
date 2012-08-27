@@ -4,7 +4,8 @@ import cbuf
 P_UDP_PORT = 9000
 Q_UDP_PORT = 9001
 Z1_UDP_PORT = 9003
-BS_UDP_PORT=9002
+BS_UDP_PORT = 9002
+M_UDP_PORT = 9015
 
 def Z1Thread(buf):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,9 +28,9 @@ def PThread(buf):
 	sock.bind(("", P_UDP_PORT))
 	while True:
 		try:
-			datastr, addr = sock.recvfrom(10000)
+			datastr, addr = sock.recvfrom(100)
 			data = datastr.rstrip("\n")
-			cbuf.cwrite(buf, int(data))
+			cbuf.cwrite(buf, int(data) / 10.0)
 		except:
 			pass
 
@@ -38,7 +39,18 @@ def QThread(buf):
 	sock.bind(("", Q_UDP_PORT))
 	while True:
 		try:
-			datastr, addr = sock.recvfrom(10000)
+			datastr, addr = sock.recvfrom(100)
+			data = datastr.rstrip("\n")
+			cbuf.cwrite(buf, int(data) / 10.0)
+		except:
+			pass
+
+def MThread(buf):
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	sock.bind(("", M_UDP_PORT))
+	while True:
+		try:
+			datastr, addr = sock.recvfrom(100)
 			data = datastr.rstrip("\n")
 			cbuf.cwrite(buf, int(data))
 		except:
@@ -50,16 +62,14 @@ def GTThread(buf):
 	while True:
 		try:
 			datastr, addr = sock.recvfrom(10000)
-			tmp = datastr.rstrip("\n").rsplit(",")
-			sum = 0
+			data = datastr.strip().rsplit(",")
+			val = []
 			for i in range(len(buf)):
 				try:
-					val = float(tmp[i])
+					tmp = data[i].strip().rsplit(" ")
+					val.append(float(tmp[2]))
 				except:
-					val = 0
-				sum += val
-				cbuf.cwrite(buf[i], sum)
-				print sum,
-			print ""
+					val.append(0)
+				cbuf.cwrite(buf[i], sum(val))
 		except:
 			pass

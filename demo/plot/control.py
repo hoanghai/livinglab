@@ -14,13 +14,14 @@ class Control(QtGui.QWidget):
 		self.sendControl("Z1_RATE_DIV=0")
 
 	def initUI(self):
-		slider1 = 10
-		slider2 = 190
-
+		width = 750
+		slider1 = 20
+		slider2 = width - 80
+		
 		p_lbl1 = QtGui.QLabel("Active Power (WU)", self)
 		p_lbl1.move(10, 10)
 		self.p_lbl2 = QtGui.QLabel("stop", self)
-		self.p_lbl2.move(210, 30)
+		self.p_lbl2.move(width - 40, 30)
 
 		p_sld = QtGui.QSlider(QtCore.Qt.Horizontal, self)
 		p_sld.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -30,7 +31,7 @@ class Control(QtGui.QWidget):
  		q_lbl1 = QtGui.QLabel("Reactive Power (WU)", self)
 		q_lbl1.move(10, 70)
 		self.q_lbl2 = QtGui.QLabel("stop", self)
-		self.q_lbl2.move(210, 90)
+		self.q_lbl2.move(width - 40, 90)
 
 		q_sld = QtGui.QSlider(QtCore.Qt.Horizontal, self)
 		q_sld.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -40,14 +41,14 @@ class Control(QtGui.QWidget):
  		supp_lbl1 = QtGui.QLabel("Supplementary (Z1)", self)
 		supp_lbl1.move(10, 130)
 		self.supp_lbl2 = QtGui.QLabel("stop", self)
-		self.supp_lbl2.move(210, 150)
+		self.supp_lbl2.move(width - 40, 150)
 
 		supp_sld = QtGui.QSlider(QtCore.Qt.Horizontal, self)
 		supp_sld.setFocusPolicy(QtCore.Qt.NoFocus)
 		supp_sld.setGeometry(slider1, 150, slider2, 30)
 		supp_sld.valueChanged[int].connect(self.supp_changeValue)
 
-		self.setGeometry(300, 300, 250, 200)
+		self.setGeometry(300, 300, width, 200)
 		self.setWindowTitle('Control')
 		self.show()
 

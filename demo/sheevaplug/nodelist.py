@@ -27,11 +27,11 @@ def updateNode(id, counter, state, aenergy):
 
 def calcPower(node):
 	P1 = 0.259246378478
-	P2 = 4.27707806392
+	P2 = 0#4.27707806392
 	delta = node["ts2"] - node["ts1"]
 	elap = delta.seconds / 1.0 + delta.microseconds / 1000000.0
 	tmp = (node["aenergy2"] - node["aenergy1"]) / elap
-	return P1 * tmp + P2
+	return max(0, P1 * tmp + P2)
 
 def nodeToString(node):
 	nodestr = "%d %d %d %f"%(node["id"], node["counter"], node["state"], node["p"])
